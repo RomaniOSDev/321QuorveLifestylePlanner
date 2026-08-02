@@ -1,0 +1,715 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		01E64B0306C9D76476F83186 /* DateHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCC707DEC646A879EEC72B51 /* DateHelpers.swift */; };
+		042809BF04E61D97ADE01F00 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6002BF8E32D949B82E2C9C5D /* MainTabView.swift */; };
+		08AF7799F81EB301A8D4365B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 859A274A17D9936A3CC9E889 /* SettingsView.swift */; };
+		0DD4A0B54DB374EBC7433320 /* AchievementDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E1330CDE1365204B7B50642 /* AchievementDefinition.swift */; };
+		107916ED3A43F2C1A6FFF971 /* AppTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B14D2991830679FFD1A0DD /* AppTab.swift */; };
+		160D48CD7473379D9A2A4189 /* AppLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = A05094901900C31E1897C22E /* AppLink.swift */; };
+		1C7D28424C93CC2AE002B2C8 /* BannerCalm.png in Resources */ = {isa = PBXBuildFile; fileRef = 5A97C8A3CBA44546AD45DA3B /* BannerCalm.png */; };
+		23104D7D0638525933CC1CB9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2884D57917A42957778A6E /* ContentView.swift */; };
+		245BD33FCF30412698CC2760 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B935FDB572D462ABE375C9B /* AppTheme.swift */; };
+		257822044A4C78C1053D22EE /* MoodHeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D5D695529167474D2B9ADCF /* MoodHeatmapView.swift */; };
+		26C2F3E1A9FF766E24C99FE6 /* CalmCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 832AF8E2AE214599E3220FEA /* CalmCard.swift */; };
+		2873498723EC24D756F5367A /* JournalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 810AAE94B552B1D630B26505 /* JournalView.swift */; };
+		2FB83799E58B1042783AA543 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D89A09DE5B9035D19F3B8BF /* OnboardingView.swift */; };
+		31A8F3DE131342D09C0F5BFD /* FocusTimerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00C91C42099042BFA45949CC /* FocusTimerViewModel.swift */; };
+		3BCE3F3DDB2393FDD011D131 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A54C74A7CF5D1A8423C7DC /* AppDelegate.swift */; };
+		3C83A5E428F72594B131C772 /* BreathingOrbView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E7AFD8F7E4D6075AC030756 /* BreathingOrbView.swift */; };
+		501728B418591CBC6E0914B8 /* BreathingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B9DA508A144ADEEAE1AEC4 /* BreathingView.swift */; };
+		55664D34CDB442DBA8F753C3 /* ReminderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CB6CB6AE8A42E78FDB3D74 /* ReminderService.swift */; };
+		55B008831150C5B4A2D69C38 /* BreathingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24D273F2E51AC7366848CBE4 /* BreathingViewModel.swift */; };
+		69C53BDDA52E491C89012B18 /* SoundscapePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6CD999E08944CEA4672E2F /* SoundscapePlayer.swift */; };
+		71F43904C290DF83D4FE8403 /* Habit.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6106A7931B44C61080BC6A /* Habit.swift */; };
+		739E178F25DD61E5EECE5ADD /* AppNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479277C211710E2C5811F1FF /* AppNotifications.swift */; };
+		75EF0620B53A87C9B002B3FF /* AchievementBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3605FC5A20EA64BCA4A46E8 /* AchievementBannerView.swift */; };
+		79D15675EE620C6FF62869F7 /* EmptyArt.png in Resources */ = {isa = PBXBuildFile; fileRef = CEE8CF3383B8D61CF12717AE /* EmptyArt.png */; };
+		844D9EE6673EEB0752E8BC09 /* AchievementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D735950CF20E077638CB3567 /* AchievementsView.swift */; };
+		86096922C676453283845548 /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285D95D0DD4F4875B8E2E68B /* StatisticsView.swift */; };
+		875E31C8A0FC459E82EC07E8 /* DailyQuotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C204EAC7AE2455AB62552E1 /* DailyQuotes.swift */; };
+		87C79342E955238B98F712FC /* EmojiPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B17603D058D1C64EAD255C8 /* EmojiPickerView.swift */; };
+		9423AFEA30BB78BA3B97F035 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BC2785CE85266DD12F41BA84 /* Assets.xcassets */; };
+		9C140B86F589869489EB06C4 /* HeroBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C956225B9A4FCE1ED9486E /* HeroBackgroundView.swift */; };
+		A7283CF825B1F451972D9669 /* FeedbackHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E54225E184D0E0237C5E5AFB /* FeedbackHelper.swift */; };
+		A99AE6FB3C0647D623712C69 /* Mood.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0AACAA67C9532E425DB3D3D /* Mood.swift */; };
+		AC3D35DC5A694E0F9D46C0A0 /* BreathingSessionRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECD691CA4ED44178FF6E0A9 /* BreathingSessionRecord.swift */; };
+		CF20895183E545BF8F9D4D5C /* WeeklyReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0601D60BB6546E4BB723223 /* WeeklyReviewView.swift */; };
+		D403148C5804851A848861DF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 429F43FD58FA8A5E5D3A1459 /* LaunchScreen.storyboard */; };
+		E24DA9735F9B473A99A85A6A /* KeyboardDismiss.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDCDA4111A3342CFA9F2988A /* KeyboardDismiss.swift */; };
+		E29EB113A4B49519C9B71E37 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47A6E9CEBDF4A0D445E0411C /* DataStore.swift */; };
+		EF222D8F781BA7C72F6AD076 /* HeroBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 53F57CD5564FA039E3CC8B03 /* HeroBackground.png */; };
+		EFBA65563C28346287C7D8D2 /* DecorBadge.png in Resources */ = {isa = PBXBuildFile; fileRef = B8BD48896B87AE8297B56307 /* DecorBadge.png */; };
+		EFE8DD40661050E750EC72B9 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44DBECD81B74C0C96D4950C4 /* SceneDelegate.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		00C91C42099042BFA45949CC /* FocusTimerViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FocusTimerViewModel.swift; sourceTree = "<group>"; };
+		14B14D2991830679FFD1A0DD /* AppTab.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppTab.swift; sourceTree = "<group>"; };
+		1D5D695529167474D2B9ADCF /* MoodHeatmapView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MoodHeatmapView.swift; sourceTree = "<group>"; };
+		1E1330CDE1365204B7B50642 /* AchievementDefinition.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AchievementDefinition.swift; sourceTree = "<group>"; };
+		22A54C74A7CF5D1A8423C7DC /* AppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		24D273F2E51AC7366848CBE4 /* BreathingViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BreathingViewModel.swift; sourceTree = "<group>"; };
+		285D95D0DD4F4875B8E2E68B /* StatisticsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
+		2B935FDB572D462ABE375C9B /* AppTheme.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		2D89A09DE5B9035D19F3B8BF /* OnboardingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		3E7AFD8F7E4D6075AC030756 /* BreathingOrbView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BreathingOrbView.swift; sourceTree = "<group>"; };
+		42184481C770569C1F221A01 /* Pods-321QuorveLifestylePlanner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-321QuorveLifestylePlanner.release.xcconfig"; path = "Target Support Files/Pods-321QuorveLifestylePlanner/Pods-321QuorveLifestylePlanner.release.xcconfig"; sourceTree = "<group>"; };
+		429F43FD58FA8A5E5D3A1459 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		44DBECD81B74C0C96D4950C4 /* SceneDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		479277C211710E2C5811F1FF /* AppNotifications.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppNotifications.swift; sourceTree = "<group>"; };
+		47A6E9CEBDF4A0D445E0411C /* DataStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
+		53F57CD5564FA039E3CC8B03 /* HeroBackground.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = HeroBackground.png; sourceTree = "<group>"; };
+		5A97C8A3CBA44546AD45DA3B /* BannerCalm.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = BannerCalm.png; sourceTree = "<group>"; };
+		5B17603D058D1C64EAD255C8 /* EmojiPickerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EmojiPickerView.swift; sourceTree = "<group>"; };
+		6002BF8E32D949B82E2C9C5D /* MainTabView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		61DBD8DF2BDAA2C50A90E834 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		68656E96CF07E36471778F0A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		78C956225B9A4FCE1ED9486E /* HeroBackgroundView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HeroBackgroundView.swift; sourceTree = "<group>"; };
+		810AAE94B552B1D630B26505 /* JournalView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = JournalView.swift; sourceTree = "<group>"; };
+		832AF8E2AE214599E3220FEA /* CalmCard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CalmCard.swift; sourceTree = "<group>"; };
+		859A274A17D9936A3CC9E889 /* SettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		86CB6CB6AE8A42E78FDB3D74 /* ReminderService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ReminderService.swift; sourceTree = "<group>"; };
+		8C204EAC7AE2455AB62552E1 /* DailyQuotes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DailyQuotes.swift; sourceTree = "<group>"; };
+		8ECD691CA4ED44178FF6E0A9 /* BreathingSessionRecord.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BreathingSessionRecord.swift; sourceTree = "<group>"; };
+		95B9DA508A144ADEEAE1AEC4 /* BreathingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BreathingView.swift; sourceTree = "<group>"; };
+		9F2884D57917A42957778A6E /* ContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A05094901900C31E1897C22E /* AppLink.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppLink.swift; sourceTree = "<group>"; };
+		B8BD48896B87AE8297B56307 /* DecorBadge.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = DecorBadge.png; sourceTree = "<group>"; };
+		BB6106A7931B44C61080BC6A /* Habit.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Habit.swift; sourceTree = "<group>"; };
+		BB6CD999E08944CEA4672E2F /* SoundscapePlayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SoundscapePlayer.swift; sourceTree = "<group>"; };
+		BBA5EA0FAB4C959FFECFE717 /* 321QuorveLifestylePlanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 321QuorveLifestylePlanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC2785CE85266DD12F41BA84 /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CEE8CF3383B8D61CF12717AE /* EmptyArt.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; path = EmptyArt.png; sourceTree = "<group>"; };
+		D0AACAA67C9532E425DB3D3D /* Mood.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Mood.swift; sourceTree = "<group>"; };
+		D3605FC5A20EA64BCA4A46E8 /* AchievementBannerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AchievementBannerView.swift; sourceTree = "<group>"; };
+		D735950CF20E077638CB3567 /* AchievementsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AchievementsView.swift; sourceTree = "<group>"; };
+		DCC707DEC646A879EEC72B51 /* DateHelpers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DateHelpers.swift; sourceTree = "<group>"; };
+		E0601D60BB6546E4BB723223 /* WeeklyReviewView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WeeklyReviewView.swift; sourceTree = "<group>"; };
+		E54225E184D0E0237C5E5AFB /* FeedbackHelper.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FeedbackHelper.swift; sourceTree = "<group>"; };
+		EDCDA4111A3342CFA9F2988A /* KeyboardDismiss.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = KeyboardDismiss.swift; sourceTree = "<group>"; };
+		FC694CF0FF2FE4349D6EF143 /* Pods-321QuorveLifestylePlanner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-321QuorveLifestylePlanner.debug.xcconfig"; path = "Target Support Files/Pods-321QuorveLifestylePlanner/Pods-321QuorveLifestylePlanner.debug.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4D8BA63875D2C32B45BBA5B4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0AFEB0698CFEC92F86D05F68 /* HeroBackground.imageset */ = {
+			isa = PBXGroup;
+			children = (
+				53F57CD5564FA039E3CC8B03 /* HeroBackground.png */,
+			);
+			path = HeroBackground.imageset;
+			sourceTree = "<group>";
+		};
+		18892AFF7ACA766E6B190600 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BBA5EA0FAB4C959FFECFE717 /* 321QuorveLifestylePlanner.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1AB928C9D96E65183FF27393 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				D3605FC5A20EA64BCA4A46E8 /* AchievementBannerView.swift */,
+				3E7AFD8F7E4D6075AC030756 /* BreathingOrbView.swift */,
+				832AF8E2AE214599E3220FEA /* CalmCard.swift */,
+				5B17603D058D1C64EAD255C8 /* EmojiPickerView.swift */,
+				78C956225B9A4FCE1ED9486E /* HeroBackgroundView.swift */,
+				1D5D695529167474D2B9ADCF /* MoodHeatmapView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		1ECECF94DE6361F5A5DC3A04 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				22A54C74A7CF5D1A8423C7DC /* AppDelegate.swift */,
+				44DBECD81B74C0C96D4950C4 /* SceneDelegate.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		2BE764744CEC66D65AC64BF9 /* Base.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				429F43FD58FA8A5E5D3A1459 /* LaunchScreen.storyboard */,
+			);
+			path = Base.lproj;
+			sourceTree = "<group>";
+		};
+		2E71833B340D4BC48A0F4354 /* Review */ = {
+			isa = PBXGroup;
+			children = (
+				E0601D60BB6546E4BB723223 /* WeeklyReviewView.swift */,
+			);
+			path = Review;
+			sourceTree = "<group>";
+		};
+		308A9EE61B406F6AD8161125 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				68656E96CF07E36471778F0A /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		3CDAFA7B07A45C7F7AC873D0 /* Breathing */ = {
+			isa = PBXGroup;
+			children = (
+				95B9DA508A144ADEEAE1AEC4 /* BreathingView.swift */,
+			);
+			path = Breathing;
+			sourceTree = "<group>";
+		};
+		5142CB00F30EC8115AD53753 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				859A274A17D9936A3CC9E889 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		52462D76907E13ED1CFD401B /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				2D89A09DE5B9035D19F3B8BF /* OnboardingView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		676A546E467BB4907A33C3E7 /* BannerCalm.imageset */ = {
+			isa = PBXGroup;
+			children = (
+				5A97C8A3CBA44546AD45DA3B /* BannerCalm.png */,
+			);
+			path = BannerCalm.imageset;
+			sourceTree = "<group>";
+		};
+		6F06DBFCCBDE0A865ECD1F49 /* Assets.xcassets */ = {
+			isa = PBXGroup;
+			children = (
+				676A546E467BB4907A33C3E7 /* BannerCalm.imageset */,
+				9B532C46CD5FD1BB4A472116 /* DecorBadge.imageset */,
+				E9DE13C0F3AF2716C9F488BE /* EmptyArt.imageset */,
+				0AFEB0698CFEC92F86D05F68 /* HeroBackground.imageset */,
+			);
+			path = Assets.xcassets;
+			sourceTree = "<group>";
+		};
+		715AEA03F2270802A642EA4F /* Journal */ = {
+			isa = PBXGroup;
+			children = (
+				810AAE94B552B1D630B26505 /* JournalView.swift */,
+			);
+			path = Journal;
+			sourceTree = "<group>";
+		};
+		83062AC384B47C00B45F60C1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				308A9EE61B406F6AD8161125 /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		88887B009FA45CED91B292B7 = {
+			isa = PBXGroup;
+			children = (
+				18892AFF7ACA766E6B190600 /* Products */,
+				83062AC384B47C00B45F60C1 /* Frameworks */,
+				9422796B83DB81B21B2B0044 /* 321QuorveLifestylePlanner */,
+				A2A008E4DED123B0B54AC11D /* Pods */,
+			);
+			sourceTree = "<group>";
+		};
+		9422796B83DB81B21B2B0044 /* 321QuorveLifestylePlanner */ = {
+			isa = PBXGroup;
+			children = (
+				1ECECF94DE6361F5A5DC3A04 /* App */,
+				1AB928C9D96E65183FF27393 /* Components */,
+				E0EFD389FCF6B43C71D86C42 /* Models */,
+				F8DBA3DCD1CAFFD3B682DF2D /* Services */,
+				EB95A7079F8D06A027AC111F /* Utilities */,
+				BBB1DF2B0A6CA5DDC1B47860 /* ViewModels */,
+				E7818F40D7FAD50C6E40C8B1 /* Views */,
+				61DBD8DF2BDAA2C50A90E834 /* Info.plist */,
+				BC2785CE85266DD12F41BA84 /* Assets.xcassets */,
+				2BE764744CEC66D65AC64BF9 /* Base.lproj */,
+				6F06DBFCCBDE0A865ECD1F49 /* Assets.xcassets */,
+			);
+			path = 321QuorveLifestylePlanner;
+			sourceTree = "<group>";
+		};
+		9B532C46CD5FD1BB4A472116 /* DecorBadge.imageset */ = {
+			isa = PBXGroup;
+			children = (
+				B8BD48896B87AE8297B56307 /* DecorBadge.png */,
+			);
+			path = DecorBadge.imageset;
+			sourceTree = "<group>";
+		};
+		A2A008E4DED123B0B54AC11D /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				42184481C770569C1F221A01 /* Pods-321QuorveLifestylePlanner.release.xcconfig */,
+				FC694CF0FF2FE4349D6EF143 /* Pods-321QuorveLifestylePlanner.debug.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		BBB1DF2B0A6CA5DDC1B47860 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				00C91C42099042BFA45949CC /* FocusTimerViewModel.swift */,
+				24D273F2E51AC7366848CBE4 /* BreathingViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		D534EDE65B2CFDF874842DD5 /* Achievements */ = {
+			isa = PBXGroup;
+			children = (
+				D735950CF20E077638CB3567 /* AchievementsView.swift */,
+			);
+			path = Achievements;
+			sourceTree = "<group>";
+		};
+		D8D6163A137C43A59EAF57DF /* Statistics */ = {
+			isa = PBXGroup;
+			children = (
+				285D95D0DD4F4875B8E2E68B /* StatisticsView.swift */,
+			);
+			path = Statistics;
+			sourceTree = "<group>";
+		};
+		E0EFD389FCF6B43C71D86C42 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				8ECD691CA4ED44178FF6E0A9 /* BreathingSessionRecord.swift */,
+				1E1330CDE1365204B7B50642 /* AchievementDefinition.swift */,
+				14B14D2991830679FFD1A0DD /* AppTab.swift */,
+				BB6106A7931B44C61080BC6A /* Habit.swift */,
+				D0AACAA67C9532E425DB3D3D /* Mood.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		E7818F40D7FAD50C6E40C8B1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				2E71833B340D4BC48A0F4354 /* Review */,
+				D8D6163A137C43A59EAF57DF /* Statistics */,
+				D534EDE65B2CFDF874842DD5 /* Achievements */,
+				3CDAFA7B07A45C7F7AC873D0 /* Breathing */,
+				9F2884D57917A42957778A6E /* ContentView.swift */,
+				715AEA03F2270802A642EA4F /* Journal */,
+				6002BF8E32D949B82E2C9C5D /* MainTabView.swift */,
+				52462D76907E13ED1CFD401B /* Onboarding */,
+				5142CB00F30EC8115AD53753 /* Settings */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		E9DE13C0F3AF2716C9F488BE /* EmptyArt.imageset */ = {
+			isa = PBXGroup;
+			children = (
+				CEE8CF3383B8D61CF12717AE /* EmptyArt.png */,
+			);
+			path = EmptyArt.imageset;
+			sourceTree = "<group>";
+		};
+		EB95A7079F8D06A027AC111F /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				BB6CD999E08944CEA4672E2F /* SoundscapePlayer.swift */,
+				2B935FDB572D462ABE375C9B /* AppTheme.swift */,
+				8C204EAC7AE2455AB62552E1 /* DailyQuotes.swift */,
+				86CB6CB6AE8A42E78FDB3D74 /* ReminderService.swift */,
+				EDCDA4111A3342CFA9F2988A /* KeyboardDismiss.swift */,
+				A05094901900C31E1897C22E /* AppLink.swift */,
+				479277C211710E2C5811F1FF /* AppNotifications.swift */,
+				DCC707DEC646A879EEC72B51 /* DateHelpers.swift */,
+				E54225E184D0E0237C5E5AFB /* FeedbackHelper.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		F8DBA3DCD1CAFFD3B682DF2D /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				47A6E9CEBDF4A0D445E0411C /* DataStore.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		FDD55FA9724581698897311B /* 321QuorveLifestylePlanner */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AC7CEE0C1969716EA8E513F1 /* Build configuration list for PBXNativeTarget "321QuorveLifestylePlanner" */;
+			buildPhases = (
+				8FD54D8F225C110254A7B900 /* [CP] Check Pods Manifest.lock */,
+				0C84E8A9BF5E6776F636E8F3 /* Sources */,
+				4D8BA63875D2C32B45BBA5B4 /* Frameworks */,
+				9BA554F850401BDCF845ED45 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = 321QuorveLifestylePlanner;
+			productName = 321QuorveLifestylePlanner;
+			productReference = BBA5EA0FAB4C959FFECFE717 /* 321QuorveLifestylePlanner.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		227396BD042990D201B35516 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 2620;
+			};
+			buildConfigurationList = C316EAFA355C9E3077FD4778 /* Build configuration list for PBXProject "321QuorveLifestylePlanner" */;
+			compatibilityVersion = "Xcode 15.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 88887B009FA45CED91B292B7;
+			productRefGroup = 18892AFF7ACA766E6B190600 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FDD55FA9724581698897311B /* 321QuorveLifestylePlanner */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9BA554F850401BDCF845ED45 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9423AFEA30BB78BA3B97F035 /* Assets.xcassets in Resources */,
+				D403148C5804851A848861DF /* LaunchScreen.storyboard in Resources */,
+				1C7D28424C93CC2AE002B2C8 /* BannerCalm.png in Resources */,
+				EFBA65563C28346287C7D8D2 /* DecorBadge.png in Resources */,
+				79D15675EE620C6FF62869F7 /* EmptyArt.png in Resources */,
+				EF222D8F781BA7C72F6AD076 /* HeroBackground.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		8FD54D8F225C110254A7B900 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-321QuorveLifestylePlanner-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0C84E8A9BF5E6776F636E8F3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				875E31C8A0FC459E82EC07E8 /* DailyQuotes.swift in Sources */,
+				245BD33FCF30412698CC2760 /* AppTheme.swift in Sources */,
+				69C53BDDA52E491C89012B18 /* SoundscapePlayer.swift in Sources */,
+				31A8F3DE131342D09C0F5BFD /* FocusTimerViewModel.swift in Sources */,
+				CF20895183E545BF8F9D4D5C /* WeeklyReviewView.swift in Sources */,
+				E24DA9735F9B473A99A85A6A /* KeyboardDismiss.swift in Sources */,
+				55664D34CDB442DBA8F753C3 /* ReminderService.swift in Sources */,
+				AC3D35DC5A694E0F9D46C0A0 /* BreathingSessionRecord.swift in Sources */,
+				86096922C676453283845548 /* StatisticsView.swift in Sources */,
+				3BCE3F3DDB2393FDD011D131 /* AppDelegate.swift in Sources */,
+				EFE8DD40661050E750EC72B9 /* SceneDelegate.swift in Sources */,
+				75EF0620B53A87C9B002B3FF /* AchievementBannerView.swift in Sources */,
+				3C83A5E428F72594B131C772 /* BreathingOrbView.swift in Sources */,
+				26C2F3E1A9FF766E24C99FE6 /* CalmCard.swift in Sources */,
+				87C79342E955238B98F712FC /* EmojiPickerView.swift in Sources */,
+				9C140B86F589869489EB06C4 /* HeroBackgroundView.swift in Sources */,
+				257822044A4C78C1053D22EE /* MoodHeatmapView.swift in Sources */,
+				0DD4A0B54DB374EBC7433320 /* AchievementDefinition.swift in Sources */,
+				107916ED3A43F2C1A6FFF971 /* AppTab.swift in Sources */,
+				71F43904C290DF83D4FE8403 /* Habit.swift in Sources */,
+				A99AE6FB3C0647D623712C69 /* Mood.swift in Sources */,
+				E29EB113A4B49519C9B71E37 /* DataStore.swift in Sources */,
+				160D48CD7473379D9A2A4189 /* AppLink.swift in Sources */,
+				739E178F25DD61E5EECE5ADD /* AppNotifications.swift in Sources */,
+				01E64B0306C9D76476F83186 /* DateHelpers.swift in Sources */,
+				A7283CF825B1F451972D9669 /* FeedbackHelper.swift in Sources */,
+				55B008831150C5B4A2D69C38 /* BreathingViewModel.swift in Sources */,
+				844D9EE6673EEB0752E8BC09 /* AchievementsView.swift in Sources */,
+				501728B418591CBC6E0914B8 /* BreathingView.swift in Sources */,
+				23104D7D0638525933CC1CB9 /* ContentView.swift in Sources */,
+				2873498723EC24D756F5367A /* JournalView.swift in Sources */,
+				042809BF04E61D97ADE01F00 /* MainTabView.swift in Sources */,
+				2FB83799E58B1042783AA543 /* OnboardingView.swift in Sources */,
+				08AF7799F81EB301A8D4365B /* SettingsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		50C9E070F8A722AC90DE47A6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FC694CF0FF2FE4349D6EF143 /* Pods-321QuorveLifestylePlanner.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = 321QuorveLifestylePlanner/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Quorve Lifestyle Planner";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aur.187rv2l9f3styl2;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		90B794FD5C07A9C1C1D2861B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		CFBE85A06E6C48A2BE39A639 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 42184481C770569C1F221A01 /* Pods-321QuorveLifestylePlanner.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = 321QuorveLifestylePlanner/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Quorve Lifestyle Planner";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aur.187rv2l9f3styl2;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		E9109372429628EEF89743EB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AC7CEE0C1969716EA8E513F1 /* Build configuration list for PBXNativeTarget "321QuorveLifestylePlanner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFBE85A06E6C48A2BE39A639 /* Release */,
+				50C9E070F8A722AC90DE47A6 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C316EAFA355C9E3077FD4778 /* Build configuration list for PBXProject "321QuorveLifestylePlanner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E9109372429628EEF89743EB /* Debug */,
+				90B794FD5C07A9C1C1D2861B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 227396BD042990D201B35516 /* Project object */;
+}
