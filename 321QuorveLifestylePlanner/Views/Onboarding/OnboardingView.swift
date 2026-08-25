@@ -15,21 +15,21 @@ struct OnboardingView: View {
     private let pages: [OnboardingPage] = [
         OnboardingPage(
             id: 0,
-            headline: "Find Inner Calm",
-            description: "Use the app to enhance mindfulness and emotional well-being.",
-            symbol: "circle.circle"
+            headline: "Close today in 3 steps",
+            description: "Log three wins, two drains, and one timed move. The day gets a clean ending instead of an open loop.",
+            symbol: "checkmark.rectangle.fill"
         ),
         OnboardingPage(
             id: 1,
-            headline: "Document Feelings",
-            description: "Capture your daily emotions with the journal feature.",
-            symbol: "heart.text.square"
+            headline: "Park one move for tomorrow",
+            description: "Each close locks a single action with a morning, midday, or evening window — not a long habit list.",
+            symbol: "flag.checkered"
         ),
         OnboardingPage(
             id: 2,
-            headline: "Start Your Journey",
-            description: "Begin by writing your first journal entry today.",
-            symbol: "pencil.and.outline"
+            headline: "See which plans stick",
+            description: "The week board shows closed evenings and which moves you actually did. Optional wind-down comes after the close.",
+            symbol: "calendar"
         )
     ]
 

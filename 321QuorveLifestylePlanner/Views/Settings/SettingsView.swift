@@ -64,9 +64,11 @@ struct SettingsView: View {
                 }
                 .accessibilityIdentifier("settings_reset")
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            .padding(.horizontal, 20)
+            .padding(.top, 16)
+            .padding(.bottom, 20)
         }
+        .clearScrollBackground()
         .scrollDismissesKeyboard(.interactively)
         .alert("Reset All Data?", isPresented: $showResetAlert) {
             Button("Cancel", role: .cancel) {}
@@ -74,7 +76,7 @@ struct SettingsView: View {
                 store.resetAll()
             }
         } message: {
-            Text("This will permanently delete all journal entries, habits, and progress.")
+            Text("This will permanently delete all 3-2-1 closes, moves, and wind-down sessions.")
         }
         .alert("Notifications Disabled", isPresented: $reminderDeniedHint) {
             Button("OK", role: .cancel) {}
@@ -84,7 +86,7 @@ struct SettingsView: View {
                 }
             }
         } message: {
-            Text("Enable notifications in Settings to receive a daily journal reminder.")
+            Text("Enable notifications in Settings to get an evening close reminder.")
         }
     }
 
@@ -96,15 +98,15 @@ struct SettingsView: View {
                         .font(.headline)
                         .foregroundStyle(Color("AppTextPrimary"))
                     Spacer()
-                    Text("See Charts tab")
+                    Text("See Week tab")
                         .font(.caption)
                         .foregroundStyle(Color("AppTextSecondary"))
                 }
 
-                statRow(label: "Journal Entries", value: "\(store.entriesCreated)")
-                statRow(label: "Breathing Sessions", value: "\(store.sessionsCompleted)")
-                statRow(label: "Current Streak", value: "\(store.streakDays) days")
-                statRow(label: "Minutes Practiced", value: "\(store.totalMinutesPracticed)")
+                statRow(label: "Days closed", value: "\(store.closesCount)")
+                statRow(label: "Moves done", value: "\(store.movesCompleted)")
+                statRow(label: "Close streak", value: "\(store.streakDays) days")
+                statRow(label: "Wind-down minutes", value: "\(store.totalMinutesPracticed)")
             }
         }
     }
@@ -177,7 +179,7 @@ struct SettingsView: View {
                     get: { reminderEnabled },
                     set: { newValue in
                         Task {
-                            await ReminderService.setEnabled(newValue)
+                            await ReminderService.setEnabled(newValue, hour: 21)
                             await MainActor.run {
                                 reminderEnabled = ReminderService.isEnabled
                                 if newValue && !ReminderService.isEnabled {
@@ -187,13 +189,13 @@ struct SettingsView: View {
                         }
                     }
                 )) {
-                    Label("Journal at 8:00 PM", systemImage: "bell.fill")
+                        Label("Close at 9:00 PM", systemImage: "bell.fill")
                         .foregroundStyle(Color("AppTextPrimary"))
                 }
                 .tint(Color("AppPrimary"))
                 .accessibilityIdentifier("settings_reminder_toggle")
 
-                Text("A gentle nudge to log your mood and habits.")
+                Text("A nudge to run 3-2-1 before the evening slips.")
                     .font(.caption)
                     .foregroundStyle(Color("AppTextSecondary"))
             }

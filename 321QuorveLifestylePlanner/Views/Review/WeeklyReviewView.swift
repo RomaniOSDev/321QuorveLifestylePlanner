@@ -48,14 +48,24 @@ struct WeeklyReviewView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
+            ZStack {
+                Color("AppBackground")
+                    .overlay {
+                        Image("HeroBackground")
+                            .resizable()
+                            .scaledToFill()
+                            .opacity(0.5)
+                    }
+                    .ignoresSafeArea()
+
+                ScrollView {
+                    VStack(spacing: 16) {
                     CalmCard {
                         VStack(alignment: .leading, spacing: 10) {
                             Text("This Week")
                                 .font(.title2.weight(.semibold))
                                 .foregroundStyle(Color("AppTextPrimary"))
-                            Text("A gentle look at your last 7 days.")
+                            Text("Which closes stuck, and which moves slipped.")
                                 .font(.subheadline)
                                 .foregroundStyle(Color("AppTextSecondary"))
                         }
@@ -63,21 +73,20 @@ struct WeeklyReviewView: View {
 
                     CalmCard {
                         VStack(alignment: .leading, spacing: 12) {
-                            row("Mood tone", summary.moodLabel)
-                            row("Journal entries", "\(summary.entriesCount)")
-                            row("Habit completion", "\(Int(summary.habitCompletion * 100))%")
-                            row("Breathing minutes", "\(summary.breathMinutes)")
-                            row("Current streak", "\(summary.streak) days")
+                            row("Days closed", "\(summary.closesCount)")
+                            row("Moves done", "\(summary.movesDone)/\(summary.movesDue)")
+                            row("Wind-down minutes", "\(summary.breathMinutes)")
+                            row("Close streak", "\(summary.streak) days")
                         }
                     }
 
-                    if !summary.topTags.isEmpty {
+                    if !summary.topDrains.isEmpty {
                         CalmCard {
                             VStack(alignment: .leading, spacing: 10) {
-                                Text("Top mood tags")
+                                Text("Repeated drains")
                                     .font(.headline)
                                     .foregroundStyle(Color("AppTextPrimary"))
-                                FlowTagRow(tags: summary.topTags)
+                                FlowTagRow(tags: summary.topDrains)
                             }
                         }
                     }
@@ -90,15 +99,18 @@ struct WeeklyReviewView: View {
                 }
                 .padding(16)
             }
-            .background(Color("AppBackground").ignoresSafeArea())
-            .navigationTitle("Weekly Review")
+            .clearScrollBackground()
+            }
+            .navigationTitle("Weekly Recap")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }
                 }
             }
+            .background(Color.clear)
         }
+        .background(Color.clear)
     }
 
     private func row(_ title: String, _ value: String) -> some View {
@@ -114,16 +126,16 @@ struct WeeklyReviewView: View {
     }
 
     private var reflectionLine: String {
-        if summary.entriesCount == 0 {
-            return "No entries yet this week — a single check-in tomorrow is a beautiful start."
+        if summary.closesCount == 0 {
+            return "No closes yet this week — one 3-2-1 tonight is enough to start the board."
         }
-        if summary.habitCompletion >= 0.7 {
-            return "Your habits held steady. Protect that rhythm."
+        if summary.moveRate >= 0.7 {
+            return "Most parked moves actually happened. Keep the list to one action."
         }
         if summary.breathMinutes >= 10 {
-            return "Breath practice showed up for you. Keep the minutes gentle and regular."
+            return "Wind-down showed up. Keep it after the close, not instead of it."
         }
-        return "Notice what felt heavy and what felt light — both belong in your story."
+        return "Notice which drains repeat — that is the window to protect tomorrow."
     }
 }
 

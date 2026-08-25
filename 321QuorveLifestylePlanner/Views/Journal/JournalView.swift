@@ -1,34 +1,35 @@
 import SwiftUI
 
-struct JournalView: View {
+struct TodayCloseView: View {
     @ObservedObject var store: DataStore
 
-    @State private var selectedEmoji = "🙂"
-    @State private var noteText = ""
-    @State private var selectedTags: Set<String> = []
-    @State private var showAddHabit = false
-    @State private var newHabitName = ""
+    @State private var wins: [String] = ["", "", ""]
+    @State private var drains: [String] = ["", ""]
+    @State private var drainTags: Set<String> = []
+    @State private var moveTitle = ""
+    @State private var moveSlot: MoveSlot = .morning
+    @State private var didPickSlotManually = false
+    @State private var isEditing = false
     @State private var showSavedPulse = false
-    @State private var showWeeklyReview = false
-    @State private var habitForNote: Habit?
-    @State private var habitNoteDraft = ""
-
-    private let moodEmojis = ["😊", "😄", "🙂", "😐", "😔", "😢", "😌", "🥰", "😇", "🤔", "😴", "😤"]
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
-                headerBanner
-                dailyQuoteCard
-                moodSection
-                habitsSection
-                streakToolsSection
-                historySection
-                analyticsSection
+            VStack(spacing: 18) {
+                header
+                if let planned = store.todaysPlannedMove {
+                    plannedMoveCard(planned)
+                }
+                if store.hasClosedToday && !isEditing {
+                    closedSummary
+                } else {
+                    threeTwoOneForm
+                }
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 24)
+            .padding(.horizontal, 20)
+            .padding(.top, 16)
+            .padding(.bottom, 20)
         }
+        .clearScrollBackground()
         .scrollDismissesKeyboard(.interactively)
         .dismissKeyboardOnTap()
         .toolbar {
@@ -45,100 +46,173 @@ struct JournalView: View {
                     .transition(.scale.combined(with: .opacity))
             }
         }
-        .sheet(isPresented: $showAddHabit) { addHabitSheet }
-        .sheet(isPresented: $showWeeklyReview) {
-            WeeklyReviewView(store: store)
-        }
-        .sheet(item: $habitForNote) { habit in
-            habitNoteSheet(habit)
-        }
-        .onAppear {
-            store.ensureTodayHabits()
-            if let today = store.todayMood {
-                selectedEmoji = today.emoji
-                noteText = today.note
-                selectedTags = Set(today.tags)
-            }
-        }
+        .onAppear(perform: loadDraftFromStore)
     }
 
-    private var headerBanner: some View {
-        VStack(spacing: 14) {
-            Image("BannerCalm")
-                .resizable()
-                .scaledToFill()
-                .frame(height: 140)
-                .clipped()
-                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
-                        .stroke(Color("AppAccent").opacity(0.35), lineWidth: 1)
-                )
-                .shadow(color: Color("AppPrimary").opacity(0.25), radius: 12, y: 6)
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("3-2-1 Close")
+                .font(.system(size: 30, weight: .semibold, design: .rounded))
+                .foregroundStyle(Color("AppTextPrimary"))
+            Text("Shut the day in three wins, two drains, and one move for tomorrow.")
+                .font(.subheadline)
+                .foregroundStyle(Color("AppTextSecondary"))
+                .fixedSize(horizontal: false, vertical: true)
 
-            VStack(spacing: 6) {
-                Text("Mindfulness Journal")
-                    .font(.system(size: 28, weight: .light, design: .rounded))
+            HStack(spacing: 16) {
+                metricChip("\(store.streakDays)", "close streak")
+                metricChip("\(store.closesCount)", "days closed")
+                metricChip("\(store.movesCompleted)", "moves done")
+            }
+            .padding(.top, 4)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func metricChip(_ value: String, _ label: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(value)
+                .font(.headline)
+                .foregroundStyle(Color("AppAccent"))
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(Color("AppTextSecondary"))
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func plannedMoveCard(_ planned: DayClose) -> some View {
+        CalmCard {
+            VStack(alignment: .leading, spacing: 12) {
+                Label("First move today", systemImage: planned.moveSlot.icon)
+                    .font(.headline)
                     .foregroundStyle(Color("AppTextPrimary"))
-                Text("Track your mood & habits")
+
+                Text(planned.moveTitle)
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(Color("AppTextPrimary"))
+
+                Text("\(planned.moveSlot.title) · \(planned.moveTimeLabel)")
                     .font(.subheadline)
                     .foregroundStyle(Color("AppTextSecondary"))
+
+                if planned.isMoveDone {
+                    Text("Done. That plan actually stuck.")
+                        .font(.caption)
+                        .foregroundStyle(Color("AppAccent"))
+                } else {
+                    Button {
+                        store.completeTodaysPlannedMove()
+                    } label: {
+                        Text("Mark move done")
+                            .font(.headline)
+                            .foregroundStyle(Color("AppTextPrimary"))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                    .fill(Color("AppPrimary"))
+                            )
+                    }
+                    .accessibilityIdentifier("complete_move_button")
+                }
             }
-            .multilineTextAlignment(.center)
-            .frame(maxWidth: .infinity)
         }
-        .padding(.top, 12)
     }
 
-    private var dailyQuoteCard: some View {
-        CalmCard {
-            VStack(alignment: .leading, spacing: 8) {
-                Label("Today's Affirmation", systemImage: "sparkles")
-                    .font(.headline)
-                    .foregroundStyle(Color("AppTextPrimary"))
-                Text(DailyQuotes.quote())
-                    .font(.system(.body, design: .serif))
-                    .foregroundStyle(Color("AppTextSecondary"))
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
-    }
+    private var closedSummary: some View {
+        Group {
+            if let closed = store.todayClose {
+                CalmCard {
+                    VStack(alignment: .leading, spacing: 14) {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Day closed")
+                                    .font(.headline)
+                                    .foregroundStyle(Color("AppTextPrimary"))
+                                Text("Locked at \(timeLabel(closed.closedAt))")
+                                    .font(.caption)
+                                    .foregroundStyle(Color("AppTextSecondary"))
+                            }
+                            Spacer()
+                            Button("Edit") {
+                                FeedbackHelper.tap()
+                                loadDraftFromStore()
+                                isEditing = true
+                            }
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(Color("AppAccent"))
+                        }
 
-    private var moodSection: some View {
-        CalmCard {
-            VStack(alignment: .leading, spacing: 14) {
-                Label("Today's Mood", systemImage: "face.smiling")
-                    .font(.headline)
-                    .foregroundStyle(Color("AppTextPrimary"))
+                        numberedBlock(number: 3, title: "Wins") {
+                            ForEach(Array(closed.filledWins.enumerated()), id: \.offset) { _, win in
+                                summaryRow(win)
+                            }
+                        }
 
-                if store.todayMood == nil && noteText.isEmpty {
-                    HStack {
-                        Image("EmptyArt")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 48, height: 48)
-                        Text("Track your mood today!")
-                            .font(.subheadline)
+                        numberedBlock(number: 2, title: "Drains") {
+                            ForEach(Array(closed.filledDrains.enumerated()), id: \.offset) { _, drain in
+                                summaryRow(drain)
+                            }
+                            if !closed.drainTags.isEmpty {
+                                Text(closed.drainTags.joined(separator: " · "))
+                                    .font(.caption)
+                                    .foregroundStyle(Color("AppAccent"))
+                            }
+                        }
+
+                        numberedBlock(number: 1, title: "Tomorrow's move") {
+                            summaryRow(closed.moveTitle)
+                            Text("\(closed.moveSlot.title) · \(closed.moveTimeLabel)")
+                                .font(.caption)
+                                .foregroundStyle(Color("AppTextSecondary"))
+                        }
+
+                        Text("Optional next: open Wind-down for a short reset.")
+                            .font(.caption)
                             .foregroundStyle(Color("AppTextSecondary"))
                     }
                 }
+            }
+        }
+    }
 
-                EmojiPickerView(emojis: moodEmojis, selected: $selectedEmoji)
+    private var threeTwoOneForm: some View {
+        VStack(spacing: 18) {
+            numberedCard(number: 3, title: "Wins", subtitle: "Three things that actually happened.") {
+                ForEach(0..<3, id: \.self) { index in
+                    closeField(
+                        placeholder: winPlaceholder(index),
+                        text: $wins[index],
+                        identifier: "win_field_\(index)"
+                    )
+                }
+            }
 
-                Text("What shaped today?")
+            numberedCard(number: 2, title: "Drains", subtitle: "What pulled energy off the day.") {
+                ForEach(0..<2, id: \.self) { index in
+                    closeField(
+                        placeholder: drainPlaceholder(index),
+                        text: $drains[index],
+                        identifier: "drain_field_\(index)"
+                    )
+                }
+
+                Text("Where it came from")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(Color("AppTextSecondary"))
 
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 88), spacing: 8)], spacing: 8) {
-                    ForEach(MoodTag.allCases) { tag in
-                        let selected = selectedTags.contains(tag.rawValue)
+                    ForEach(DrainTag.allCases) { tag in
+                        let selected = drainTags.contains(tag.rawValue)
                         Button {
                             FeedbackHelper.tap()
                             if selected {
-                                selectedTags.remove(tag.rawValue)
+                                drainTags.remove(tag.rawValue)
                             } else {
-                                selectedTags.insert(tag.rawValue)
+                                drainTags.insert(tag.rawValue)
                             }
+                            applySuggestedSlotIfNeeded()
                         } label: {
                             Label(tag.rawValue, systemImage: tag.icon)
                                 .font(.caption.weight(.semibold))
@@ -153,378 +227,176 @@ struct JournalView: View {
                     }
                 }
 
-                TextField("Add a note about your day...", text: $noteText, axis: .vertical)
-                    .lineLimit(3...5)
-                    .foregroundStyle(Color("AppTextPrimary"))
-                    .padding(12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(Color("AppBackground").opacity(0.5))
-                    )
-                    .accessibilityIdentifier("journal_note_field")
-
-                Button {
-                    KeyboardDismiss.resign()
-                    store.addMood(
-                        emoji: selectedEmoji,
-                        note: noteText,
-                        tags: Array(selectedTags).sorted()
-                    )
-                    withAnimation(.spring(response: 0.35)) {
-                        showSavedPulse = true
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                        withAnimation { showSavedPulse = false }
-                    }
-                } label: {
-                    Text(store.todayMood == nil ? "Save Mood" : "Update Mood")
-                        .font(.headline)
-                        .foregroundStyle(Color("AppTextPrimary"))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .fill(Color("AppPrimary"))
-                        )
-                }
-                .accessibilityIdentifier("save_mood_button")
-            }
-        }
-    }
-
-    private var habitsSection: some View {
-        CalmCard {
-            VStack(alignment: .leading, spacing: 14) {
-                HStack {
-                    Label("Today's Habits", systemImage: "checkmark.circle")
-                        .font(.headline)
-                        .foregroundStyle(Color("AppTextPrimary"))
-                    Spacer()
-                    Button {
-                        FeedbackHelper.tap()
-                        showAddHabit = true
-                    } label: {
-                        Image(systemName: "plus.circle.fill")
-                            .foregroundStyle(Color("AppAccent"))
-                    }
-                    .accessibilityIdentifier("add_habit_button")
-                }
-
-                let todayHabits = store.todayHabits
-                if todayHabits.isEmpty {
-                    Text("No habits logged yet")
-                        .font(.subheadline)
-                        .foregroundStyle(Color("AppTextSecondary"))
-                } else {
-                    ForEach(todayHabits) { habit in
-                        VStack(alignment: .leading, spacing: 6) {
-                            HStack {
-                                Text(habit.name)
-                                    .foregroundStyle(Color("AppTextPrimary"))
-                                Spacer()
-                                Toggle("", isOn: Binding(
-                                    get: { habit.isCompleted },
-                                    set: { newValue in
-                                        if newValue && !habit.isCompleted {
-                                            habitNoteDraft = habit.note
-                                            habitForNote = habit
-                                        } else {
-                                            store.toggleHabit(habit)
-                                        }
-                                    }
-                                ))
-                                .labelsHidden()
-                                .tint(Color("AppPrimary"))
-                                .accessibilityIdentifier("habit_toggle_\(habit.name)")
-                            }
-
-                            if !habit.note.isEmpty {
-                                Text(habit.note)
-                                    .font(.caption)
-                                    .foregroundStyle(Color("AppTextSecondary"))
-                            }
-                        }
-                        .contextMenu {
-                            Button {
-                                habitNoteDraft = habit.note
-                                habitForNote = habit
-                            } label: {
-                                Label("Edit Note", systemImage: "pencil")
-                            }
-                            Button(role: .destructive) {
-                                store.deleteHabit(habit)
-                            } label: {
-                                Label("Delete", systemImage: "trash")
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private var streakToolsSection: some View {
-        CalmCard {
-            VStack(alignment: .leading, spacing: 12) {
-                Label("Streak & Review", systemImage: "flame.fill")
-                    .font(.headline)
-                    .foregroundStyle(Color("AppTextPrimary"))
-
-                MoodStreakBadge(streak: store.streakDays)
-
-                Text("Freezes left this month: \(store.streakFreezesRemaining)")
+                Text("Suggested window: \(DrainTag.suggestedSlot(from: Array(drainTags)).title)")
                     .font(.caption)
                     .foregroundStyle(Color("AppTextSecondary"))
+            }
 
-                HStack(spacing: 10) {
-                    Button {
-                        _ = store.useStreakFreeze()
-                    } label: {
-                        Text(store.canUseStreakFreeze ? "Freeze Yesterday" : "Freeze Unavailable")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(Color("AppTextPrimary"))
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .fill(Color("AppPrimary").opacity(store.canUseStreakFreeze ? 1 : 0.45))
-                            )
-                    }
-                    .disabled(!store.canUseStreakFreeze)
+            numberedCard(number: 1, title: "One move", subtitle: "A single timed action for tomorrow.") {
+                closeField(
+                    placeholder: "e.g. Walk 20 min before inbox",
+                    text: $moveTitle,
+                    identifier: "move_field"
+                )
 
-                    Button {
-                        FeedbackHelper.tap()
-                        showWeeklyReview = true
-                    } label: {
-                        Text("Weekly Review")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(Color("AppTextPrimary"))
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .fill(Color("AppSurface"))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                            .stroke(Color("AppAccent").opacity(0.45), lineWidth: 1)
-                                    )
-                            )
+                Picker("When", selection: $moveSlot) {
+                    ForEach(MoveSlot.allCases) { slot in
+                        Text(slot.title).tag(slot)
                     }
                 }
+                .pickerStyle(.segmented)
+                .onChange(of: moveSlot) { _ in
+                    didPickSlotManually = true
+                }
+
+                Text("Park it at \(moveSlot.title.lowercased()) · \(timeLabel(hour: moveSlot.defaultHour, minute: moveSlot.defaultMinute))")
+                    .font(.caption)
+                    .foregroundStyle(Color("AppTextSecondary"))
+            }
+
+            Button {
+                KeyboardDismiss.resign()
+                let saved = store.saveDayClose(
+                    wins: wins,
+                    drains: drains,
+                    drainTags: Array(drainTags),
+                    moveTitle: moveTitle,
+                    moveSlot: moveSlot,
+                    moveHour: moveSlot.defaultHour,
+                    moveMinute: moveSlot.defaultMinute
+                )
+                guard saved else { return }
+                isEditing = false
+                withAnimation(.spring(response: 0.35)) {
+                    showSavedPulse = true
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    withAnimation { showSavedPulse = false }
+                }
+            } label: {
+                Text(store.hasClosedToday ? "Update close" : "Close the day")
+                    .font(.headline)
+                    .foregroundStyle(Color("AppTextPrimary"))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .fill(Color("AppPrimary"))
+                    )
+            }
+            .accessibilityIdentifier("close_day_button")
+
+            if isEditing {
+                Button("Cancel") {
+                    isEditing = false
+                    loadDraftFromStore()
+                }
+                .foregroundStyle(Color("AppTextSecondary"))
             }
         }
     }
 
-    private var historySection: some View {
-        let past = Array(store.pastMoods.prefix(8))
-        return Group {
-            if !past.isEmpty {
-                CalmCard {
-                    VStack(alignment: .leading, spacing: 14) {
-                        Label("Recent Entries", systemImage: "clock.arrow.circlepath")
-                            .font(.headline)
-                            .foregroundStyle(Color("AppTextPrimary"))
-
-                        ForEach(past) { mood in
-                            HStack(alignment: .top, spacing: 12) {
-                                Text(mood.emoji)
-                                    .font(.title2)
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(historyDate(mood.date))
-                                        .font(.subheadline.weight(.semibold))
-                                        .foregroundStyle(Color("AppTextPrimary"))
-                                    if mood.note.isEmpty {
-                                        Text("No note")
-                                            .font(.caption)
-                                            .foregroundStyle(Color("AppTextSecondary"))
-                                    } else {
-                                        Text(mood.note)
-                                            .font(.caption)
-                                            .foregroundStyle(Color("AppTextSecondary"))
-                                            .lineLimit(2)
-                                    }
-                                    if !mood.tags.isEmpty {
-                                        Text(mood.tags.joined(separator: " · "))
-                                            .font(.caption2)
-                                            .foregroundStyle(Color("AppAccent"))
-                                    }
-                                }
-                                Spacer()
-                                Button {
-                                    store.deleteMood(mood)
-                                } label: {
-                                    Image(systemName: "trash")
-                                        .font(.caption)
-                                        .foregroundStyle(Color("AppTextSecondary"))
-                                }
-                                .accessibilityLabel("Delete entry")
-                            }
-                            .padding(.vertical, 4)
-
-                            if mood.id != past.last?.id {
-                                Divider().overlay(Color("AppTextSecondary").opacity(0.2))
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private var analyticsSection: some View {
+    private func numberedCard<Content: View>(
+        number: Int,
+        title: String,
+        subtitle: String,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
         CalmCard {
             VStack(alignment: .leading, spacing: 14) {
-                Label("Mindful Analytics", systemImage: "chart.bar.fill")
-                    .font(.headline)
-                    .foregroundStyle(Color("AppTextPrimary"))
-
-                if store.moods.isEmpty {
-                    HStack {
-                        Image(systemName: "calendar.badge.plus")
-                            .font(.title2)
-                            .foregroundStyle(Color("AppAccent"))
-                        Text("Start journaling to see your progress!")
-                            .font(.subheadline)
-                            .foregroundStyle(Color("AppTextSecondary"))
-                    }
-                } else {
-                    Text("28-Day Mood Heatmap")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(Color("AppTextSecondary"))
-
-                    MoodHeatmapView(moods: store.moods) { date in
-                        store.moodIntensity(for: date)
-                    }
-                    .accessibilityIdentifier("mood_heatmap")
-
-                    Text("Open the Stats tab for detailed charts.")
+                numberedBlock(number: number, title: title) {
+                    Text(subtitle)
                         .font(.caption)
                         .foregroundStyle(Color("AppTextSecondary"))
+                    content()
                 }
             }
         }
     }
 
-    private var addHabitSheet: some View {
-        NavigationStack {
-            ZStack {
-                Color("AppBackground").ignoresSafeArea()
-                VStack(spacing: 16) {
-                    TextField("Habit name", text: $newHabitName)
-                        .foregroundStyle(Color("AppTextPrimary"))
-                        .padding()
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color("AppSurface"))
-                        )
-                        .accessibilityIdentifier("new_habit_field")
-                        .submitLabel(.done)
-                        .onSubmit { confirmAddHabit() }
-
-                    Button("Add Habit", action: confirmAddHabit)
-                        .font(.headline)
-                        .foregroundStyle(Color("AppTextPrimary"))
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color("AppPrimary"))
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .accessibilityIdentifier("confirm_add_habit")
-
-                    Spacer()
-                }
-                .padding()
-            }
-            .navigationTitle("New Habit")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        KeyboardDismiss.resign()
-                        showAddHabit = false
-                    }
-                }
-            }
-            .dismissKeyboardOnTap()
-        }
-        .presentationDetents([.medium])
-    }
-
-    private func habitNoteSheet(_ habit: Habit) -> some View {
-        NavigationStack {
-            ZStack {
-                Color("AppBackground").ignoresSafeArea()
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("Optional note for \"\(habit.name)\"")
-                        .font(.subheadline)
-                        .foregroundStyle(Color("AppTextSecondary"))
-
-                    TextField("How did it go?", text: $habitNoteDraft, axis: .vertical)
-                        .lineLimit(3...6)
-                        .foregroundStyle(Color("AppTextPrimary"))
-                        .padding()
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color("AppSurface"))
-                        )
-
-                    Button("Save") {
-                        if habit.isCompleted {
-                            store.updateHabitNote(habit, note: habitNoteDraft)
-                        } else {
-                            store.completeHabit(habit, note: habitNoteDraft)
-                        }
-                        habitForNote = nil
-                        habitNoteDraft = ""
-                    }
+    private func numberedBlock<Content: View>(
+        number: Int,
+        title: String,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+                Text("\(number)")
+                    .font(.headline.weight(.bold))
+                    .foregroundStyle(Color.white)
+                    .frame(width: 28, height: 28)
+                    .background(Circle().fill(Color("AppPrimary")))
+                Text(title)
                     .font(.headline)
                     .foregroundStyle(Color("AppTextPrimary"))
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color("AppPrimary"))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-
-                    Button("Skip Note") {
-                        if !habit.isCompleted {
-                            store.completeHabit(habit, note: "")
-                        }
-                        habitForNote = nil
-                        habitNoteDraft = ""
-                    }
-                    .foregroundStyle(Color("AppTextSecondary"))
-                    .frame(maxWidth: .infinity)
-
-                    Spacer()
-                }
-                .padding()
             }
-            .navigationTitle("Habit Note")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        habitForNote = nil
-                    }
-                }
-            }
+            content()
         }
-        .presentationDetents([.medium])
     }
 
-    private func confirmAddHabit() {
-        let trimmed = newHabitName.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else {
-            FeedbackHelper.warning()
-            return
-        }
-        store.addHabit(name: trimmed)
-        newHabitName = ""
-        KeyboardDismiss.resign()
-        showAddHabit = false
+    private func closeField(placeholder: String, text: Binding<String>, identifier: String) -> some View {
+        TextField(placeholder, text: text, axis: .vertical)
+            .lineLimit(1...3)
+            .foregroundStyle(Color("AppTextPrimary"))
+            .padding(12)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(Color("AppBackground").opacity(0.5))
+            )
+            .accessibilityIdentifier(identifier)
     }
 
-    private func historyDate(_ date: Date) -> String {
+    private func summaryRow(_ text: String) -> some View {
+        Text(text)
+            .font(.subheadline)
+            .foregroundStyle(Color("AppTextPrimary"))
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func loadDraftFromStore() {
+        if let closed = store.todayClose {
+            wins = padded(closed.wins, count: 3)
+            drains = padded(closed.drains, count: 2)
+            drainTags = Set(closed.drainTags)
+            moveTitle = closed.moveTitle
+            moveSlot = closed.moveSlot
+            didPickSlotManually = true
+        } else {
+            wins = ["", "", ""]
+            drains = ["", ""]
+            drainTags = []
+            moveTitle = ""
+            moveSlot = .morning
+            didPickSlotManually = false
+        }
+    }
+
+    private func applySuggestedSlotIfNeeded() {
+        guard !didPickSlotManually else { return }
+        moveSlot = DrainTag.suggestedSlot(from: Array(drainTags))
+    }
+
+    private func padded(_ values: [String], count: Int) -> [String] {
+        var result = values
+        while result.count < count { result.append("") }
+        return Array(result.prefix(count))
+    }
+
+    private func winPlaceholder(_ index: Int) -> String {
+        ["A concrete win", "Something you finished", "A small thing worth keeping"][index]
+    }
+
+    private func drainPlaceholder(_ index: Int) -> String {
+        ["What stalled you", "What you would skip tomorrow"][index]
+    }
+
+    private func timeLabel(_ date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
         return formatter.string(from: date)
+    }
+
+    private func timeLabel(hour: Int, minute: Int) -> String {
+        String(format: "%d:%02d", hour, minute)
     }
 }

@@ -12,7 +12,7 @@ enum ReminderService {
 
     static var reminderHour: Int {
         let stored = UserDefaults.standard.object(forKey: hourKey) as? Int
-        return stored ?? 20
+        return stored ?? 21
     }
 
     static func setEnabled(_ enabled: Bool, hour: Int = reminderHour) async {
@@ -35,8 +35,8 @@ enum ReminderService {
         dateComponents.minute = 0
 
         let content = UNMutableNotificationContent()
-        content.title = "Quorve Check-in"
-        content.body = "Take a moment to log your mood and habits."
+        content.title = "Close the day"
+        content.body = "Run 3-2-1: three wins, two drains, one move for tomorrow."
         content.sound = .default
 
         let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)

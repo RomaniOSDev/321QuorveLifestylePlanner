@@ -17,21 +17,19 @@ enum DateHelpers {
         return calendar.dateComponents([.day], from: startDay, to: endDay).day ?? 0
     }
 
-    static func moodStreak(from moods: [Mood], freezeDays: [Date] = []) -> Int {
-        let uniqueDays = Set(moods.map { startOfDay($0.date) })
-        let freezes = Set(freezeDays.map(startOfDay))
-        guard !uniqueDays.isEmpty || !freezes.isEmpty else { return 0 }
+    static func closeStreak(from closes: [DayClose]) -> Int {
+        let uniqueDays = Set(closes.map { startOfDay($0.date) })
+        guard !uniqueDays.isEmpty else { return 0 }
 
         var streak = 0
         var cursor = startOfDay(Date())
 
-        // If today isn't logged yet, start from yesterday so streak stays visible.
-        if !uniqueDays.contains(cursor) && !freezes.contains(cursor) {
+        if !uniqueDays.contains(cursor) {
             guard let yesterday = calendar.date(byAdding: .day, value: -1, to: cursor) else { return 0 }
             cursor = yesterday
         }
 
-        while uniqueDays.contains(cursor) || freezes.contains(cursor) {
+        while uniqueDays.contains(cursor) {
             streak += 1
             guard let previous = calendar.date(byAdding: .day, value: -1, to: cursor) else { break }
             cursor = previous

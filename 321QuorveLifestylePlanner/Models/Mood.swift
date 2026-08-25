@@ -1,62 +1,142 @@
 import Foundation
 
-struct Mood: Codable, Identifiable, Equatable {
-    let id: UUID
-    var emoji: String
-    var date: Date
-    var note: String
-    var tags: [String]
+enum MoveSlot: String, Codable, CaseIterable, Identifiable {
+    case morning
+    case midday
+    case evening
 
-    init(
-        id: UUID = UUID(),
-        emoji: String,
-        date: Date = Date(),
-        note: String = "",
-        tags: [String] = []
-    ) {
-        self.id = id
-        self.emoji = emoji
-        self.date = date
-        self.note = note
-        self.tags = tags
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .morning: return "Morning"
+        case .midday: return "Midday"
+        case .evening: return "Evening"
+        }
     }
 
-    enum CodingKeys: String, CodingKey {
-        case id, emoji, date, note, tags
+    var defaultHour: Int {
+        switch self {
+        case .morning: return 7
+        case .midday: return 12
+        case .evening: return 19
+        }
     }
 
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(UUID.self, forKey: .id)
-        emoji = try container.decode(String.self, forKey: .emoji)
-        date = try container.decode(Date.self, forKey: .date)
-        note = try container.decodeIfPresent(String.self, forKey: .note) ?? ""
-        tags = try container.decodeIfPresent([String].self, forKey: .tags) ?? []
+    var defaultMinute: Int {
+        switch self {
+        case .morning: return 30
+        case .midday: return 30
+        case .evening: return 0
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .morning: return "sunrise.fill"
+        case .midday: return "sun.max.fill"
+        case .evening: return "moon.stars.fill"
+        }
     }
 }
 
-enum MoodTag: String, CaseIterable, Identifiable {
-    case sleep = "Sleep"
+enum DrainTag: String, CaseIterable, Identifiable {
     case work = "Work"
-    case sport = "Sport"
-    case social = "Social"
+    case people = "People"
+    case sleep = "Sleep"
+    case delay = "Delay"
     case health = "Health"
-    case nature = "Nature"
-    case food = "Food"
-    case study = "Study"
+    case home = "Home"
+    case money = "Money"
+    case screen = "Screen"
 
     var id: String { rawValue }
 
     var icon: String {
         switch self {
-        case .sleep: return "moon.fill"
         case .work: return "briefcase.fill"
-        case .sport: return "figure.run"
-        case .social: return "person.2.fill"
+        case .people: return "person.2.fill"
+        case .sleep: return "moon.fill"
+        case .delay: return "hourglass"
         case .health: return "heart.fill"
-        case .nature: return "leaf.fill"
-        case .food: return "fork.knife"
-        case .study: return "book.fill"
+        case .home: return "house.fill"
+        case .money: return "creditcard.fill"
+        case .screen: return "iphone"
         }
+    }
+
+    static func suggestedSlot(from tags: [String]) -> MoveSlot {
+        if tags.contains(DrainTag.sleep.rawValue) || tags.contains(DrainTag.delay.rawValue) {
+            return .morning
+        }
+        if tags.contains(DrainTag.work.rawValue) || tags.contains(DrainTag.screen.rawValue) {
+            return .evening
+        }
+        return .midday
+    }
+}
+
+struct DayClose: Codable, Identifiable, Equatable {
+    let id: UUID
+    var date: Date
+    var wins: [String]
+    var drains: [String]
+    var drainTags: [String]
+    var moveTitle: String
+    var moveSlot: MoveSlot
+    var moveHour: Int
+    var moveMinute: Int
+    var isMoveDone: Bool
+    var closedAt: Date
+
+    init(
+        id: UUID = UUID(),
+        date: Date = Date(),
+        wins: [String] = ["", "", ""],
+        drains: [String] = ["", ""],
+        drainTags: [String] = [],
+        moveTitle: String = "",
+        moveSlot: MoveSlot = .morning,
+        moveHour: Int = MoveSlot.morning.defaultHour,
+        moveMinute: Int = MoveSlot.morning.defaultMinute,
+        isMoveDone: Bool = false,
+        closedAt: Date = Date()
+    ) {
+        self.id = id
+        self.date = date
+        self.wins = Self.padded(wins, count: 3)
+        self.drains = Self.padded(drains, count: 2)
+        self.drainTags = drainTags
+        self.moveTitle = moveTitle
+        self.moveSlot = moveSlot
+        self.moveHour = moveHour
+        self.moveMinute = moveMinute
+        self.isMoveDone = isMoveDone
+        self.closedAt = closedAt
+    }
+
+    var moveTimeLabel: String {
+        String(format: "%d:%02d", moveHour, moveMinute)
+    }
+
+    var filledWins: [String] {
+        wins.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
+    }
+
+    var filledDrains: [String] {
+        drains.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
+    }
+
+    var isComplete: Bool {
+        filledWins.count == 3
+            && filledDrains.count == 2
+            && !moveTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    private static func padded(_ values: [String], count: Int) -> [String] {
+        var result = values
+        while result.count < count { result.append("") }
+        if result.count > count { result = Array(result.prefix(count)) }
+        return result
     }
 }

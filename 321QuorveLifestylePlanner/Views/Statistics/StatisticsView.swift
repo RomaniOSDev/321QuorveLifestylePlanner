@@ -3,30 +3,39 @@ import SwiftUI
 
 struct StatisticsView: View {
     @ObservedObject var store: DataStore
-    var embedded: Bool = false
     @State private var showWeeklyReview = false
+
+    private let weekdayFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEE"
+        return formatter
+    }()
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 16) {
-                if !embedded {
-                    Text("Statistics")
-                        .font(.system(size: 28, weight: .light, design: .rounded))
+            VStack(spacing: 18) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Week board")
+                        .font(.system(size: 28, weight: .semibold, design: .rounded))
                         .foregroundStyle(Color("AppTextPrimary"))
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.top, 4)
+                    Text("Which evenings closed, and which moves actually happened.")
+                        .font(.subheadline)
+                        .foregroundStyle(Color("AppTextSecondary"))
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 4)
 
                 overviewCard
-                moodChartCard
-                habitChartCard
-                sessionsChartCard
+                weekStrip
+                moveChartCard
+                drainCard
+                weekMovesList
 
                 Button {
                     FeedbackHelper.tap()
                     showWeeklyReview = true
                 } label: {
-                    Label("Open Weekly Review", systemImage: "calendar.badge.clock")
+                    Label("Open weekly recap", systemImage: "calendar.badge.clock")
                         .font(.headline)
                         .foregroundStyle(Color("AppTextPrimary"))
                         .frame(maxWidth: .infinity)
@@ -41,9 +50,11 @@ struct StatisticsView: View {
                         )
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            .padding(.horizontal, 20)
+            .padding(.top, 16)
+            .padding(.bottom, 20)
         }
+        .clearScrollBackground()
         .sheet(isPresented: $showWeeklyReview) {
             WeeklyReviewView(store: store)
         }
@@ -52,15 +63,15 @@ struct StatisticsView: View {
     private var overviewCard: some View {
         CalmCard {
             VStack(alignment: .leading, spacing: 12) {
-                Text("Overview")
+                Text("This week")
                     .font(.headline)
                     .foregroundStyle(Color("AppTextPrimary"))
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                    overviewTile(title: "Entries", value: "\(store.entriesCreated)", icon: "book.fill")
-                    overviewTile(title: "Sessions", value: "\(store.sessionsCompleted)", icon: "wind")
-                    overviewTile(title: "Streak", value: "\(store.streakDays)d", icon: "flame.fill")
-                    overviewTile(title: "Minutes", value: "\(store.totalMinutesPracticed)", icon: "clock.fill")
+                    overviewTile(title: "Days closed", value: "\(store.weekCloses.count)", icon: "checkmark.rectangle.fill")
+                    overviewTile(title: "Moves done", value: "\(store.weekCloses.filter(\.isMoveDone).count)", icon: "flag.checkered")
+                    overviewTile(title: "Close streak", value: "\(store.streakDays)d", icon: "flame.fill")
+                    overviewTile(title: "Wind-down min", value: "\(store.weeklyBreathMinutes)", icon: "moon.haze.fill")
                 }
             }
         }
@@ -88,94 +99,68 @@ struct StatisticsView: View {
         )
     }
 
-    private var moodChartCard: some View {
+    private var weekStrip: some View {
         CalmCard {
             VStack(alignment: .leading, spacing: 12) {
-                Text("Mood Trend (14 days)")
+                Text("Close map")
                     .font(.headline)
                     .foregroundStyle(Color("AppTextPrimary"))
 
-                let points = store.moodTrend(days: 14)
-                if points.allSatisfy({ $0.intensity <= 0 }) {
-                    emptyChartHint("Log moods to see your emotional trend.")
-                } else {
-                    Chart(points) { point in
-                        AreaMark(
-                            x: .value("Day", point.date, unit: .day),
-                            y: .value("Mood", point.intensity)
-                        )
-                        .foregroundStyle(Color("AppAccent").opacity(0.25))
-                        .interpolationMethod(.catmullRom)
-
-                        LineMark(
-                            x: .value("Day", point.date, unit: .day),
-                            y: .value("Mood", point.intensity)
-                        )
-                        .foregroundStyle(Color("AppAccent"))
-                        .lineStyle(StrokeStyle(lineWidth: 2.5))
-                        .interpolationMethod(.catmullRom)
-
-                        PointMark(
-                            x: .value("Day", point.date, unit: .day),
-                            y: .value("Mood", point.intensity)
-                        )
-                        .foregroundStyle(Color("AppPrimary"))
-                        .symbolSize(point.intensity > 0 ? 36 : 0)
-                    }
-                    .chartYScale(domain: 0...1)
-                    .chartYAxis {
-                        AxisMarks(values: [0, 0.5, 1]) { value in
-                            AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
-                                .foregroundStyle(Color("AppTextSecondary").opacity(0.25))
-                            AxisValueLabel {
-                                if let v = value.as(Double.self) {
-                                    Text(v == 0 ? "Low" : v == 1 ? "High" : "Mid")
-                                        .font(.caption2)
-                                        .foregroundStyle(Color("AppTextSecondary"))
+                HStack(spacing: 8) {
+                    ForEach(DateHelpers.daysInCurrentWeek(), id: \.self) { day in
+                        let closed = store.close(for: day)
+                        VStack(spacing: 8) {
+                            Text(weekdayFormatter.string(from: day))
+                                .font(.caption2.weight(.semibold))
+                                .foregroundStyle(Color("AppTextSecondary"))
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .fill(closed == nil ? Color("AppBackground").opacity(0.6) : Color("AppPrimary"))
+                                .frame(height: 44)
+                                .overlay {
+                                    if let closed {
+                                        Image(systemName: closed.isMoveDone ? "checkmark" : "circle")
+                                            .font(.caption.weight(.bold))
+                                            .foregroundStyle(Color.white)
+                                    }
                                 }
-                            }
-                        }
-                    }
-                    .chartXAxis {
-                        AxisMarks(values: .stride(by: .day, count: 3)) { _ in
-                            AxisValueLabel(format: .dateTime.day().month(.abbreviated))
+                            Text(closed == nil ? "—" : (closed?.isMoveDone == true ? "move" : "open"))
+                                .font(.caption2)
                                 .foregroundStyle(Color("AppTextSecondary"))
                         }
+                        .frame(maxWidth: .infinity)
                     }
-                    .frame(height: 180)
-                    .accessibilityIdentifier("mood_trend_chart")
                 }
             }
         }
     }
 
-    private var habitChartCard: some View {
+    private var moveChartCard: some View {
         CalmCard {
             VStack(alignment: .leading, spacing: 12) {
-                Text("Habit Completion (7 days)")
+                Text("Moves that stuck (7 days)")
                     .font(.headline)
                     .foregroundStyle(Color("AppTextPrimary"))
 
-                let points = store.habitCompletionTrend(days: 7)
-                if points.allSatisfy({ $0.rate <= 0 }) {
-                    emptyChartHint("Complete habits to unlock this chart.")
+                let points = store.moveCompletionTrend(days: 7)
+                if points.allSatisfy({ $0.rate <= 0 }) && store.weekCloses.isEmpty {
+                    emptyChartHint("Close a day to park a move, then mark it done the next morning.")
                 } else {
                     Chart(points) { point in
                         BarMark(
                             x: .value("Day", point.date, unit: .day),
-                            y: .value("Rate", point.rate * 100)
+                            y: .value("Done", point.rate * 100)
                         )
                         .foregroundStyle(Color("AppPrimary").gradient)
                         .cornerRadius(6)
                     }
                     .chartYScale(domain: 0...100)
                     .chartYAxis {
-                        AxisMarks(values: [0, 50, 100]) { value in
+                        AxisMarks(values: [0, 100]) { value in
                             AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
                                 .foregroundStyle(Color("AppTextSecondary").opacity(0.25))
                             AxisValueLabel {
                                 if let v = value.as(Double.self) {
-                                    Text("\(Int(v))%")
+                                    Text(v == 0 ? "Missed" : "Done")
                                         .font(.caption2)
                                         .foregroundStyle(Color("AppTextSecondary"))
                                 }
@@ -189,47 +174,59 @@ struct StatisticsView: View {
                         }
                     }
                     .frame(height: 180)
-                    .accessibilityIdentifier("habit_completion_chart")
+                    .accessibilityIdentifier("move_completion_chart")
                 }
             }
         }
     }
 
-    private var sessionsChartCard: some View {
+    private var drainCard: some View {
         CalmCard {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Breathing Minutes (14 days)")
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Drains that repeated")
                     .font(.headline)
                     .foregroundStyle(Color("AppTextPrimary"))
 
-                let points = store.sessionMinutesTrend(days: 14)
-                if points.allSatisfy({ $0.minutes <= 0 }) {
-                    emptyChartHint("Finish a breathing session to see practice time.")
+                let tags = store.weeklyReviewSummary().topDrains
+                if tags.isEmpty {
+                    Text("No drain tags yet. They show which windows keep slipping.")
+                        .font(.subheadline)
+                        .foregroundStyle(Color("AppTextSecondary"))
                 } else {
-                    Chart(points) { point in
-                        BarMark(
-                            x: .value("Day", point.date, unit: .day),
-                            y: .value("Minutes", point.minutes)
-                        )
-                        .foregroundStyle(Color("AppAccent").gradient)
-                        .cornerRadius(6)
-                    }
-                    .chartXAxis {
-                        AxisMarks(values: .stride(by: .day, count: 3)) { _ in
-                            AxisValueLabel(format: .dateTime.day().month(.abbreviated))
-                                .foregroundStyle(Color("AppTextSecondary"))
+                    FlowTagRow(tags: tags)
+                }
+            }
+        }
+    }
+
+    private var weekMovesList: some View {
+        CalmCard {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Parked moves")
+                    .font(.headline)
+                    .foregroundStyle(Color("AppTextPrimary"))
+
+                let closes = store.weekCloses.sorted { $0.date > $1.date }
+                if closes.isEmpty {
+                    Text("Moves appear here after you close a day.")
+                        .font(.subheadline)
+                        .foregroundStyle(Color("AppTextSecondary"))
+                } else {
+                    ForEach(closes) { close in
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: close.isMoveDone ? "checkmark.circle.fill" : "circle")
+                                .foregroundStyle(close.isMoveDone ? Color("AppAccent") : Color("AppTextSecondary"))
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(close.moveTitle)
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(Color("AppTextPrimary"))
+                                Text("\(shortDate(close.date)) · \(close.moveSlot.title) \(close.moveTimeLabel)")
+                                    .font(.caption)
+                                    .foregroundStyle(Color("AppTextSecondary"))
+                            }
+                            Spacer(minLength: 0)
                         }
                     }
-                    .chartYAxis {
-                        AxisMarks { value in
-                            AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
-                                .foregroundStyle(Color("AppTextSecondary").opacity(0.25))
-                            AxisValueLabel()
-                                .foregroundStyle(Color("AppTextSecondary"))
-                        }
-                    }
-                    .frame(height: 180)
-                    .accessibilityIdentifier("sessions_chart")
                 }
             }
         }
@@ -237,7 +234,7 @@ struct StatisticsView: View {
 
     private func emptyChartHint(_ text: String) -> some View {
         HStack(spacing: 10) {
-            Image(systemName: "chart.line.uptrend.xyaxis")
+            Image(systemName: "flag.checkered")
                 .foregroundStyle(Color("AppAccent"))
             Text(text)
                 .font(.subheadline)
@@ -246,12 +243,12 @@ struct StatisticsView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 20)
     }
-}
 
-struct MoodTrendPoint: Identifiable {
-    let id = UUID()
-    let date: Date
-    let intensity: Double
+    private func shortDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEE d"
+        return formatter.string(from: date)
+    }
 }
 
 struct HabitTrendPoint: Identifiable {

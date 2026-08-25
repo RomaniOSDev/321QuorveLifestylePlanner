@@ -2,20 +2,18 @@ import SwiftUI
 
 struct MainTabView: View {
     @ObservedObject var store: DataStore
-    @State private var selectedTab: AppTab = .journal
+    @State private var selectedTab: AppTab = .today
 
     var body: some View {
         VStack(spacing: 0) {
             Group {
                 switch selectedTab {
-                case .journal:
-                    JournalView(store: store)
-                case .breathe:
+                case .today:
+                    TodayCloseView(store: store)
+                case .windDown:
                     BreathingView(store: store)
-                case .stats:
+                case .week:
                     StatisticsView(store: store)
-                case .achievements:
-                    AchievementsView(store: store)
                 case .settings:
                     SettingsView(store: store)
                 }
@@ -48,12 +46,5 @@ struct MainTabView: View {
                 .ignoresSafeArea()
         }
         .ignoresSafeArea(.keyboard)
-        .overlay(alignment: .top) {
-            if let achievement = store.pendingAchievementBanner {
-                AchievementBannerView(achievement: achievement) {
-                    store.dismissAchievementBanner()
-                }
-            }
-        }
     }
 }

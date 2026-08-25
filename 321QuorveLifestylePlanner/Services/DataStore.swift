@@ -5,87 +5,61 @@ import Foundation
 final class DataStore: ObservableObject {
     static let shared = DataStore()
 
-    @Published var moods: [Mood] = []
-    @Published var habits: [Habit] = []
+    @Published var dayCloses: [DayClose] = []
     @Published var sessionLog: [BreathingSessionRecord] = []
     @Published var breathCycleSettings: [Int] = [4, 7, 8]
     @Published var sessionsCompleted: Int = 0
     @Published var totalMinutesPracticed: Int = 0
     @Published var hasSeenOnboarding: Bool = false
-    @Published var unlockedAchievementIDs: Set<String> = []
-    @Published var pendingAchievementBanner: AchievementDefinition?
     @Published var weeklyBreathGoalMinutes: Int = 30
-    @Published var streakFreezeDates: [Date] = []
-    @Published var streakFreezesUsedThisMonth: Int = 0
-    @Published var streakFreezeMonthKey: String = ""
-
-    private var achievementQueue: [AchievementDefinition] = []
+    @Published var unlockedAchievementIDs: Set<String> = []
 
     private let defaults = UserDefaults.standard
-    private let moodsKey = "quorve_moods"
-    private let habitsKey = "quorve_habits"
+    private let closesKey = "quorve_day_closes"
     private let sessionsLogKey = "quorve_session_log"
     private let breathKey = "quorve_breath_cycle"
     private let sessionsKey = "quorve_sessions"
     private let minutesKey = "quorve_minutes"
     private let onboardingKey = "quorve_onboarding"
-    private let achievementsKey = "quorve_achievements"
     private let weeklyGoalKey = "quorve_weekly_breath_goal"
-    private let freezeDatesKey = "quorve_streak_freezes"
-    private let freezesUsedKey = "quorve_freezes_used"
-    private let freezeMonthKey = "quorve_freeze_month"
-
-    private let defaultHabitNames = ["Meditation", "Exercise", "Gratitude"]
-    private let maxFreezesPerMonth = 2
 
     private init() {
         load()
-        ensureDefaultHabits()
-        refreshFreezeMonthIfNeeded()
     }
 
-    var entriesCreated: Int { moods.count }
+    var closesCount: Int { dayCloses.count }
+
+    var entriesCreated: Int { closesCount }
+
+    var movesCompleted: Int {
+        dayCloses.filter(\.isMoveDone).count
+    }
 
     var streakDays: Int {
-        DateHelpers.moodStreak(from: moods, freezeDays: streakFreezeDates)
-    }
-
-    var streakFreezesRemaining: Int {
-        max(0, maxFreezesPerMonth - streakFreezesUsedThisMonth)
-    }
-
-    var canUseStreakFreeze: Bool {
-        guard streakFreezesRemaining > 0 else { return false }
-        guard let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: DateHelpers.startOfDay(Date())) else {
-            return false
-        }
-        let yesterdayStart = DateHelpers.startOfDay(yesterday)
-        let hasMoodYesterday = moods.contains { DateHelpers.isSameDay($0.date, yesterdayStart) }
-        let alreadyFrozen = streakFreezeDates.contains { DateHelpers.isSameDay($0, yesterdayStart) }
-        return !hasMoodYesterday && !alreadyFrozen
+        DateHelpers.closeStreak(from: dayCloses)
     }
 
     var stats: AppStats {
         AppStats(
-            entriesCreated: entriesCreated,
+            entriesCreated: closesCount,
             sessionsCompleted: sessionsCompleted,
             streakDays: streakDays,
             totalMinutesPracticed: totalMinutesPracticed
         )
     }
 
-    var todayMood: Mood? {
-        moods.first { DateHelpers.isSameDay($0.date, Date()) }
+    var todayClose: DayClose? {
+        dayCloses.first { DateHelpers.isSameDay($0.date, Date()) }
     }
 
-    var todayHabits: [Habit] {
-        habits.filter { DateHelpers.isSameDay($0.date, Date()) }
-    }
+    var hasClosedToday: Bool { todayClose != nil }
 
-    var pastMoods: [Mood] {
-        moods
-            .filter { !DateHelpers.isSameDay($0.date, Date()) }
-            .sorted { $0.date > $1.date }
+    /// Yesterday's close carries the move that belongs to today.
+    var todaysPlannedMove: DayClose? {
+        guard let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date()) else {
+            return nil
+        }
+        return dayCloses.first { DateHelpers.isSameDay($0.date, yesterday) }
     }
 
     var weeklyBreathMinutes: Int {
@@ -100,22 +74,25 @@ final class DataStore: ObservableObject {
         return min(Double(weeklyBreathMinutes) / Double(weeklyBreathGoalMinutes), 1)
     }
 
-    func load() {
-        if let data = defaults.data(forKey: moodsKey),
-           let decoded = try? JSONDecoder().decode([Mood].self, from: data) {
-            moods = decoded
+    var weekCloses: [DayClose] {
+        let days = DateHelpers.daysInCurrentWeek()
+        return dayCloses.filter { close in
+            days.contains { DateHelpers.isSameDay($0, close.date) }
         }
-        if let data = defaults.data(forKey: habitsKey),
-           let decoded = try? JSONDecoder().decode([Habit].self, from: data) {
-            habits = decoded
+    }
+
+    func close(for date: Date) -> DayClose? {
+        dayCloses.first { DateHelpers.isSameDay($0.date, date) }
+    }
+
+    func load() {
+        if let data = defaults.data(forKey: closesKey),
+           let decoded = try? JSONDecoder().decode([DayClose].self, from: data) {
+            dayCloses = decoded
         }
         if let data = defaults.data(forKey: sessionsLogKey),
            let decoded = try? JSONDecoder().decode([BreathingSessionRecord].self, from: data) {
             sessionLog = decoded
-        }
-        if let data = defaults.data(forKey: freezeDatesKey),
-           let decoded = try? JSONDecoder().decode([Date].self, from: data) {
-            streakFreezeDates = decoded
         }
         if let cycle = defaults.array(forKey: breathKey) as? [Int], cycle.count == 3 {
             breathCycleSettings = cycle
@@ -125,34 +102,20 @@ final class DataStore: ObservableObject {
         hasSeenOnboarding = defaults.bool(forKey: onboardingKey)
         let goal = defaults.integer(forKey: weeklyGoalKey)
         weeklyBreathGoalMinutes = goal > 0 ? goal : 30
-        streakFreezesUsedThisMonth = defaults.integer(forKey: freezesUsedKey)
-        streakFreezeMonthKey = defaults.string(forKey: freezeMonthKey) ?? ""
-        if let ids = defaults.array(forKey: achievementsKey) as? [String] {
-            unlockedAchievementIDs = Set(ids)
-        }
     }
 
     func save() {
-        if let data = try? JSONEncoder().encode(moods) {
-            defaults.set(data, forKey: moodsKey)
-        }
-        if let data = try? JSONEncoder().encode(habits) {
-            defaults.set(data, forKey: habitsKey)
+        if let data = try? JSONEncoder().encode(dayCloses) {
+            defaults.set(data, forKey: closesKey)
         }
         if let data = try? JSONEncoder().encode(sessionLog) {
             defaults.set(data, forKey: sessionsLogKey)
-        }
-        if let data = try? JSONEncoder().encode(streakFreezeDates) {
-            defaults.set(data, forKey: freezeDatesKey)
         }
         defaults.set(breathCycleSettings, forKey: breathKey)
         defaults.set(sessionsCompleted, forKey: sessionsKey)
         defaults.set(totalMinutesPracticed, forKey: minutesKey)
         defaults.set(hasSeenOnboarding, forKey: onboardingKey)
-        defaults.set(Array(unlockedAchievementIDs), forKey: achievementsKey)
         defaults.set(weeklyBreathGoalMinutes, forKey: weeklyGoalKey)
-        defaults.set(streakFreezesUsedThisMonth, forKey: freezesUsedKey)
-        defaults.set(streakFreezeMonthKey, forKey: freezeMonthKey)
     }
 
     func completeOnboarding() {
@@ -160,62 +123,65 @@ final class DataStore: ObservableObject {
         save()
     }
 
-    func addMood(emoji: String, note: String, tags: [String] = []) {
-        if let index = moods.firstIndex(where: { DateHelpers.isSameDay($0.date, Date()) }) {
-            moods[index].emoji = emoji
-            moods[index].note = note
-            moods[index].tags = tags
-            moods[index].date = Date()
+    @discardableResult
+    func saveDayClose(
+        wins: [String],
+        drains: [String],
+        drainTags: [String],
+        moveTitle: String,
+        moveSlot: MoveSlot,
+        moveHour: Int,
+        moveMinute: Int
+    ) -> Bool {
+        let draft = DayClose(
+            date: Date(),
+            wins: wins,
+            drains: drains,
+            drainTags: drainTags.sorted(),
+            moveTitle: moveTitle.trimmingCharacters(in: .whitespacesAndNewlines),
+            moveSlot: moveSlot,
+            moveHour: min(max(moveHour, 0), 23),
+            moveMinute: min(max(moveMinute, 0), 59),
+            isMoveDone: false,
+            closedAt: Date()
+        )
+        guard draft.isComplete else {
+            FeedbackHelper.warning()
+            return false
+        }
+
+        if let index = dayCloses.firstIndex(where: { DateHelpers.isSameDay($0.date, Date()) }) {
+            let existing = dayCloses[index]
+            dayCloses[index] = DayClose(
+                id: existing.id,
+                date: Date(),
+                wins: draft.wins,
+                drains: draft.drains,
+                drainTags: draft.drainTags,
+                moveTitle: draft.moveTitle,
+                moveSlot: draft.moveSlot,
+                moveHour: draft.moveHour,
+                moveMinute: draft.moveMinute,
+                isMoveDone: existing.isMoveDone,
+                closedAt: Date()
+            )
         } else {
-            moods.insert(Mood(emoji: emoji, note: note, tags: tags), at: 0)
+            dayCloses.insert(draft, at: 0)
         }
         save()
-        checkAchievements()
         FeedbackHelper.save()
+        return true
     }
 
-    func deleteMood(_ mood: Mood) {
-        moods.removeAll { $0.id == mood.id }
-        save()
-        FeedbackHelper.tap()
-    }
-
-    func toggleHabit(_ habit: Habit) {
-        guard let index = habits.firstIndex(where: { $0.id == habit.id }) else { return }
-        habits[index].isCompleted.toggle()
-        save()
-        FeedbackHelper.tap()
-    }
-
-    func updateHabitNote(_ habit: Habit, note: String) {
-        guard let index = habits.firstIndex(where: { $0.id == habit.id }) else { return }
-        habits[index].note = note
-        save()
-    }
-
-    func completeHabit(_ habit: Habit, note: String) {
-        guard let index = habits.firstIndex(where: { $0.id == habit.id }) else { return }
-        habits[index].isCompleted = true
-        habits[index].note = note
-        save()
-        FeedbackHelper.save()
-    }
-
-    func addHabit(name: String) {
-        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else {
+    func completeTodaysPlannedMove() {
+        guard let planned = todaysPlannedMove,
+              let index = dayCloses.firstIndex(where: { $0.id == planned.id }) else {
             FeedbackHelper.warning()
             return
         }
-        habits.append(Habit(name: trimmed))
+        dayCloses[index].isMoveDone = true
         save()
-        FeedbackHelper.save()
-    }
-
-    func deleteHabit(_ habit: Habit) {
-        habits.removeAll { $0.id == habit.id }
-        save()
-        FeedbackHelper.tap()
+        FeedbackHelper.success()
     }
 
     func updateBreathSettings(inhale: Int, hold: Int, exhale: Int) {
@@ -237,65 +203,7 @@ final class DataStore: ObservableObject {
             at: 0
         )
         save()
-        checkAchievements()
         FeedbackHelper.sessionComplete()
-    }
-
-    @discardableResult
-    func useStreakFreeze() -> Bool {
-        refreshFreezeMonthIfNeeded()
-        guard canUseStreakFreeze else {
-            FeedbackHelper.warning()
-            return false
-        }
-        guard let yesterday = Calendar.current.date(
-            byAdding: .day,
-            value: -1,
-            to: DateHelpers.startOfDay(Date())
-        ) else { return false }
-
-        streakFreezeDates.append(DateHelpers.startOfDay(yesterday))
-        streakFreezesUsedThisMonth += 1
-        save()
-        FeedbackHelper.success()
-        return true
-    }
-
-    func moods(for date: Date) -> [Mood] {
-        moods.filter { DateHelpers.isSameDay($0.date, date) }
-    }
-
-    func moodIntensity(for date: Date) -> Double {
-        let dayMoods = moods(for: date)
-        guard !dayMoods.isEmpty else { return 0 }
-        let positive: Set<String> = ["😊", "😄", "🙂", "😌", "🥰", "😇"]
-        let neutral: Set<String> = ["😐", "🤔", "😴"]
-        let scores = dayMoods.map { mood -> Double in
-            if positive.contains(mood.emoji) { return 1.0 }
-            if neutral.contains(mood.emoji) { return 0.5 }
-            return 0.25
-        }
-        return scores.reduce(0, +) / Double(scores.count)
-    }
-
-    func moodTrend(days: Int) -> [MoodTrendPoint] {
-        DateHelpers.lastNDays(days).map { day in
-            MoodTrendPoint(date: day, intensity: moodIntensity(for: day))
-        }
-    }
-
-    func habitCompletionTrend(days: Int) -> [HabitTrendPoint] {
-        DateHelpers.lastNDays(days).map { day in
-            let dayHabits = habits.filter { DateHelpers.isSameDay($0.date, day) }
-            let rate: Double
-            if dayHabits.isEmpty {
-                rate = 0
-            } else {
-                let done = dayHabits.filter(\.isCompleted).count
-                rate = Double(done) / Double(dayHabits.count)
-            }
-            return HabitTrendPoint(date: day, rate: rate)
-        }
     }
 
     func sessionMinutesTrend(days: Int) -> [SessionTrendPoint] {
@@ -307,137 +215,76 @@ final class DataStore: ObservableObject {
         }
     }
 
+    func closeTrend(days: Int) -> [CloseTrendPoint] {
+        DateHelpers.lastNDays(days).map { day in
+            CloseTrendPoint(date: day, didClose: close(for: day) != nil)
+        }
+    }
+
+    func moveCompletionTrend(days: Int) -> [HabitTrendPoint] {
+        DateHelpers.lastNDays(days).map { day in
+            guard let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: day) else {
+                return HabitTrendPoint(date: day, rate: 0)
+            }
+            guard let planned = close(for: yesterday) else {
+                return HabitTrendPoint(date: day, rate: 0)
+            }
+            return HabitTrendPoint(date: day, rate: planned.isMoveDone ? 1 : 0)
+        }
+    }
+
     func weeklyReviewSummary() -> WeeklyReviewSummary {
         let days = DateHelpers.lastNDays(7)
-        let weekMoods = moods.filter { mood in
-            days.contains { DateHelpers.isSameDay($0, mood.date) }
+        let weekCloses = dayCloses.filter { close in
+            days.contains { DateHelpers.isSameDay($0, close.date) }
         }
-        let avgIntensity: Double
-        if weekMoods.isEmpty {
-            avgIntensity = 0
-        } else {
-            avgIntensity = weekMoods.map { moodIntensity(for: $0.date) }.reduce(0, +) / Double(weekMoods.count)
-        }
-
-        let tagged = Dictionary(grouping: weekMoods.flatMap(\.tags), by: { $0 })
+        let movesDue = weekCloses.count
+        let movesDone = weekCloses.filter(\.isMoveDone).count
+        let tagged = Dictionary(grouping: weekCloses.flatMap(\.drainTags), by: { $0 })
             .map { (tag: $0.key, count: $0.value.count) }
             .sorted { $0.count > $1.count }
-
-        let habitDays = days.map { day -> Double in
-            let dayHabits = habits.filter { DateHelpers.isSameDay($0.date, day) }
-            guard !dayHabits.isEmpty else { return 0 }
-            return Double(dayHabits.filter(\.isCompleted).count) / Double(dayHabits.count)
-        }
-        let habitAverage = habitDays.isEmpty ? 0 : habitDays.reduce(0, +) / Double(habitDays.count)
-
         let breathMinutes = sessionLog
             .filter { session in days.contains { DateHelpers.isSameDay($0, session.date) } }
             .reduce(0) { $0 + $1.minutes }
 
         return WeeklyReviewSummary(
-            entriesCount: weekMoods.count,
-            averageMoodIntensity: avgIntensity,
-            topTags: Array(tagged.prefix(3).map(\.tag)),
-            habitCompletion: habitAverage,
+            closesCount: weekCloses.count,
+            movesDone: movesDone,
+            movesDue: movesDue,
+            topDrains: Array(tagged.prefix(3).map(\.tag)),
             breathMinutes: breathMinutes,
             streak: streakDays
         )
     }
 
     func resetAll() {
-        moods = []
-        habits = []
+        dayCloses = []
         sessionLog = []
         breathCycleSettings = [4, 7, 8]
         sessionsCompleted = 0
         totalMinutesPracticed = 0
-        unlockedAchievementIDs = []
-        pendingAchievementBanner = nil
-        achievementQueue = []
         weeklyBreathGoalMinutes = 30
-        streakFreezeDates = []
-        streakFreezesUsedThisMonth = 0
-        streakFreezeMonthKey = currentMonthKey()
-        ensureDefaultHabits()
         save()
         NotificationCenter.default.post(name: .dataReset, object: nil)
-    }
-
-    func ensureTodayHabits() {
-        let existingToday = habits.filter { DateHelpers.isSameDay($0.date, Date()) }
-        guard existingToday.isEmpty else { return }
-
-        let names: [String]
-        if let latestDate = habits.map(\.date).max() {
-            let previousNames = habits
-                .filter { DateHelpers.isSameDay($0.date, latestDate) }
-                .map(\.name)
-            names = previousNames.isEmpty ? defaultHabitNames : previousNames
-        } else {
-            names = defaultHabitNames
-        }
-
-        for name in names {
-            habits.append(Habit(name: name, date: Date()))
-        }
-        save()
-    }
-
-    private func ensureDefaultHabits() {
-        ensureTodayHabits()
-    }
-
-    private func checkAchievements() {
-        for achievement in AchievementDefinition.all {
-            guard !unlockedAchievementIDs.contains(achievement.id),
-                  achievement.isUnlocked(stats) else { continue }
-            unlockedAchievementIDs.insert(achievement.id)
-            if pendingAchievementBanner == nil {
-                pendingAchievementBanner = achievement
-            } else {
-                achievementQueue.append(achievement)
-            }
-            FeedbackHelper.achievementUnlocked()
-        }
-        save()
-    }
-
-    func dismissAchievementBanner() {
-        if !achievementQueue.isEmpty {
-            pendingAchievementBanner = achievementQueue.removeFirst()
-        } else {
-            pendingAchievementBanner = nil
-        }
-    }
-
-    private func refreshFreezeMonthIfNeeded() {
-        let key = currentMonthKey()
-        if streakFreezeMonthKey != key {
-            streakFreezeMonthKey = key
-            streakFreezesUsedThisMonth = 0
-            save()
-        }
-    }
-
-    private func currentMonthKey() -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM"
-        return formatter.string(from: Date())
     }
 }
 
 struct WeeklyReviewSummary {
-    let entriesCount: Int
-    let averageMoodIntensity: Double
-    let topTags: [String]
-    let habitCompletion: Double
+    let closesCount: Int
+    let movesDone: Int
+    let movesDue: Int
+    let topDrains: [String]
     let breathMinutes: Int
     let streak: Int
 
-    var moodLabel: String {
-        if averageMoodIntensity >= 0.75 { return "Uplifted" }
-        if averageMoodIntensity >= 0.45 { return "Balanced" }
-        if averageMoodIntensity > 0 { return "Heavy" }
-        return "Quiet"
+    var moveRate: Double {
+        guard movesDue > 0 else { return 0 }
+        return Double(movesDone) / Double(movesDue)
     }
+}
+
+struct CloseTrendPoint: Identifiable {
+    let id = UUID()
+    let date: Date
+    let didClose: Bool
 }

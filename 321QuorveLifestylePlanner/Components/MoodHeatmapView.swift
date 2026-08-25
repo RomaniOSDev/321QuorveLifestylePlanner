@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct MoodHeatmapView: View {
-    let moods: [Mood]
-    let intensityProvider: (Date) -> Double
+    let closes: [DayClose]
+    let didClose: (Date) -> Bool
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 7)
 
@@ -11,32 +11,26 @@ struct MoodHeatmapView: View {
 
         LazyVGrid(columns: columns, spacing: 6) {
             ForEach(days, id: \.self) { day in
-                let intensity = intensityProvider(day)
+                let closed = didClose(day)
                 RoundedRectangle(cornerRadius: 6, style: .continuous)
-                    .fill(cellColor(intensity: intensity))
+                    .fill(closed ? Color("AppAccent").opacity(0.7) : Color("AppBackground").opacity(0.6))
                     .frame(height: 28)
                     .overlay {
-                        if let mood = moods.first(where: { DateHelpers.isSameDay($0.date, day) }) {
-                            Text(mood.emoji)
-                                .font(.system(size: 12))
+                        if closed {
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundStyle(Color.white)
                         }
                     }
-                    .accessibilityLabel(dayLabel(day, intensity: intensity))
+                    .accessibilityLabel(dayLabel(day, closed: closed))
             }
         }
     }
 
-    private func cellColor(intensity: Double) -> Color {
-        if intensity <= 0 {
-            return Color("AppBackground").opacity(0.6)
-        }
-        return Color("AppAccent").opacity(0.25 + intensity * 0.65)
-    }
-
-    private func dayLabel(_ date: Date, intensity: Double) -> String {
+    private func dayLabel(_ date: Date, closed: Bool) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM d"
-        return "\(formatter.string(from: date)), intensity \(Int(intensity * 100))%"
+        return "\(formatter.string(from: date)), \(closed ? "closed" : "open")"
     }
 }
 
@@ -48,10 +42,10 @@ struct MoodStreakBadge: View {
             Image(systemName: "flame.fill")
                 .foregroundStyle(Color("AppPrimary"))
             VStack(alignment: .leading, spacing: 2) {
-                Text("\(streak) Day Streak")
+                Text("\(streak) Day Close Streak")
                     .font(.headline)
                     .foregroundStyle(Color("AppTextPrimary"))
-                Text("Keep journaling daily")
+                Text("Close the day to keep it")
                     .font(.caption)
                     .foregroundStyle(Color("AppTextSecondary"))
             }

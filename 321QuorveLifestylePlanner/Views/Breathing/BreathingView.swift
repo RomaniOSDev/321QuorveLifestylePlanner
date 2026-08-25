@@ -25,10 +25,16 @@ struct BreathingView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                Text("Guided Practice")
-                    .font(.system(size: 30, weight: .ultraLight, design: .rounded))
-                    .foregroundStyle(Color("AppTextPrimary"))
-                    .padding(.top, 12)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Wind-down")
+                        .font(.system(size: 30, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Color("AppTextPrimary"))
+                    Text("Optional reset after you close the day. A short breath or focus block — not the main loop.")
+                        .font(.subheadline)
+                        .foregroundStyle(Color("AppTextSecondary"))
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 12)
 
                 Picker("Mode", selection: $mode) {
                     ForEach(PracticeMode.allCases) { item in
@@ -48,8 +54,10 @@ struct BreathingView: View {
                 soundscapeCard
             }
             .padding(.horizontal, 20)
-            .padding(.bottom, 32)
+            .padding(.top, 16)
+            .padding(.bottom, 20)
         }
+        .clearScrollBackground()
         .onChange(of: scenePhase) { newPhase in
             viewModel.handleScenePhase(newPhase)
             if newPhase != .active {
@@ -68,7 +76,7 @@ struct BreathingView: View {
             VStack(alignment: .leading, spacing: 14) {
                 GoalProgressRing(
                     progress: store.weeklyBreathProgress,
-                    title: "Weekly Breath Goal",
+                    title: "Weekly wind-down",
                     subtitle: "\(store.weeklyBreathMinutes)/\(store.weeklyBreathGoalMinutes) min this week"
                 )
 
@@ -102,7 +110,7 @@ struct BreathingView: View {
                     Image(systemName: "wind")
                         .font(.system(size: 36))
                         .foregroundStyle(Color("AppAccent"))
-                    Text("Breathe Mindfully Today")
+                    Text("Use this after a 3-2-1 close, not instead of it.")
                         .font(.subheadline)
                         .foregroundStyle(Color("AppTextSecondary"))
                 }
