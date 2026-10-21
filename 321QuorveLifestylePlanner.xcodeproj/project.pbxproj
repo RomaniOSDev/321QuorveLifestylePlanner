@@ -62,6 +62,7 @@
 		L321B12A1B2C3D4E5F60718 /* PushNotificationURLRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = L321F12A1B2C3D4E5F60718 /* PushNotificationURLRouter.swift */; };
 		L321B13A1B2C3D4E5F60718 /* UserAgentBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = L321F13A1B2C3D4E5F60718 /* UserAgentBuilder.swift */; };
 		L321B14A1B2C3D4E5F60718 /* WebviewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = L321F14A1B2C3D4E5F60718 /* WebviewVC.swift */; };
+		L321B15A1B2C3D4E5F60718 /* NotificationInteractionCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = L321F15A1B2C3D4E5F60718 /* NotificationInteractionCallback.swift */; };
 		N321B01A1B2C3D4E5F60718 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = N321F01A1B2C3D4E5F60718 /* NotificationService.swift */; };
 		N321B02A1B2C3D4E5F60718 /* NotificationServiceExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = N321F03A1B2C3D4E5F60718 /* NotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		N321B03A1B2C3D4E5F60718 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = P321D01A1B2C3D4E5F60718 /* FirebaseMessaging */; };
@@ -145,6 +146,7 @@
 		L321F12A1B2C3D4E5F60718 /* PushNotificationURLRouter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PushNotificationURLRouter.swift; sourceTree = "<group>"; };
 		L321F13A1B2C3D4E5F60718 /* UserAgentBuilder.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UserAgentBuilder.swift; sourceTree = "<group>"; };
 		L321F14A1B2C3D4E5F60718 /* WebviewVC.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WebviewVC.swift; sourceTree = "<group>"; };
+		L321F15A1B2C3D4E5F60718 /* NotificationInteractionCallback.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NotificationInteractionCallback.swift; sourceTree = "<group>"; };
 		N321F01A1B2C3D4E5F60718 /* NotificationService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		N321F02A1B2C3D4E5F60718 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		N321F03A1B2C3D4E5F60718 /* NotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -441,6 +443,7 @@
 				L321F09A1B2C3D4E5F60718 /* NotificationPermissionManager.swift */,
 				L321F10A1B2C3D4E5F60718 /* NotificationPermissionView.swift */,
 				L321F11A1B2C3D4E5F60718 /* NotificationPermissionViewController.swift */,
+				L321F15A1B2C3D4E5F60718 /* NotificationInteractionCallback.swift */,
 				L321F12A1B2C3D4E5F60718 /* PushNotificationURLRouter.swift */,
 				L321F13A1B2C3D4E5F60718 /* UserAgentBuilder.swift */,
 				L321F14A1B2C3D4E5F60718 /* WebviewVC.swift */,
@@ -635,6 +638,7 @@
 				L321B09A1B2C3D4E5F60718 /* NotificationPermissionManager.swift in Sources */,
 				L321B10A1B2C3D4E5F60718 /* NotificationPermissionView.swift in Sources */,
 				L321B11A1B2C3D4E5F60718 /* NotificationPermissionViewController.swift in Sources */,
+				L321B15A1B2C3D4E5F60718 /* NotificationInteractionCallback.swift in Sources */,
 				L321B12A1B2C3D4E5F60718 /* PushNotificationURLRouter.swift in Sources */,
 				L321B13A1B2C3D4E5F60718 /* UserAgentBuilder.swift in Sources */,
 				L321B14A1B2C3D4E5F60718 /* WebviewVC.swift in Sources */,
@@ -663,7 +667,9 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
+				ENABLE_DEBUG_DYLIB = NO;
 				ENABLE_PREVIEWS = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = x86_64;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = 321QuorveLifestylePlanner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Quorve Lifestyle Planner";
@@ -672,7 +678,12 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 2.0;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.aur.187rv2l9f3styl2;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -720,9 +731,11 @@
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_DEBUG_DYLIB = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = x86_64;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -734,6 +747,10 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SUPPORTS_MACCATALYST = NO;
@@ -757,7 +774,9 @@
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
+				ENABLE_DEBUG_DYLIB = NO;
 				ENABLE_PREVIEWS = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = x86_64;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = 321QuorveLifestylePlanner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Quorve Lifestyle Planner";
@@ -766,7 +785,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 2.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.aur.187rv2l9f3styl2;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -815,9 +838,11 @@
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_DEBUG_DYLIB = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = x86_64;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -836,6 +861,10 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SUPPORTS_MACCATALYST = NO;
@@ -854,6 +883,8 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_DEBUG_DYLIB = NO;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = x86_64;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NotificationServiceExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = NotificationServiceExtension;
@@ -863,7 +894,12 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 2.0;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.aur.187rv2l9f3styl2.NotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -884,6 +920,8 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_DEBUG_DYLIB = NO;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = x86_64;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NotificationServiceExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = NotificationServiceExtension;
@@ -893,7 +931,11 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 2.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.aur.187rv2l9f3styl2.NotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

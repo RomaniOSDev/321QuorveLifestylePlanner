@@ -122,8 +122,8 @@ final class ConfigManager {
             if case .success(let config) = parsed,
                config.ok,
                let url = config.url,
-               let expires = config.expires,
-               URL(string: url) != nil {
+               URL(string: url) != nil,
+               let expires = config.expires {
                 self?.saveStoredConfig(urlString: url, expires: expires)
             }
             DispatchQueue.main.async {
@@ -152,7 +152,7 @@ final class ConfigManager {
         let expires = payload.expires?.int64Value
         let url = payload.url?.trimmingCharacters(in: .whitespacesAndNewlines)
         let hasValidURL = url.flatMap { URL(string: $0) } != nil
-        let ok = payload.ok && hasValidURL && expires != nil
+        let ok = payload.ok && hasValidURL
         return .success(
             ConfigResponse(
                 ok: ok,
